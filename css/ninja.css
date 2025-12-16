@@ -1,0 +1,63 @@
+﻿/* =========================
+   AIDFLOW NINJA — IDENTIDAD
+========================= */
+
+:root {
+  --ninja-primary: #38bdf8;
+  --ninja-dark: #020617;
+  --ninja-glow: rgba(56, 189, 248, 0.6);
+}
+
+/* Glow general */
+.glow {
+  box-shadow: 0 0 20px var(--ninja-glow);
+}
+
+/* HERO */
+.hero h1 {
+  text-shadow: 0 0 25px var(--ninja-glow);
+}
+
+/* BOTONES NINJA */
+.btn.primary {
+  box-shadow: 0 0 18px var(--ninja-glow);
+}
+
+.btn.primary:hover {
+  box-shadow: 0 0 30px var(--ninja-glow);
+}
+
+/* CARDS */
+.card {
+  background: linear-gradient(180deg, #020617, #020617);
+  border: 1px solid #0f172a;
+  border-radius: 10px;
+  padding: 25px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px var(--ninja-glow);
+}
+
+/* BADGES */
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: var(--ninja-primary);
+  color: var(--ninja-dark);
+}
+
+/* LISTAS */
+.features-list li::marker {
+  color: var(--ninja-primary);
+}
+
+/* TRANSICIONES SUAVES */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
