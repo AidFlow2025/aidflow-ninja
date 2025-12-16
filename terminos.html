@@ -8,10 +8,15 @@
 </head>
 <body>
 
-<header>
-  <nav>
-    <strong>AidFlow Ninja</strong>
-    <ul>
+<header class="header">
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="index.html" class="logo-text">AidFlow Ninja</a>
+    </div>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+
+    <ul class="nav-links" id="navMenu">
       <li><a href="index.html">Inicio</a></li>
       <li><a href="como-funciona.html">Cómo Funciona</a></li>
       <li><a href="niveles.html">Niveles</a></li>
@@ -19,7 +24,6 @@
       <li><a href="dao.html">DAO</a></li>
       <li><a href="juegos.html">Juegos</a></li>
       <li><a href="faq.html">FAQs</a></li>
-      <li><a href="terminos.html">Terminos</a></li>
       <li><a href="contacto.html">Contacto</a></li>
     </ul>
   </nav>
@@ -70,9 +74,16 @@
 
 </main>
 
+<footer class="footer">
+  <div class="footer-container">
+    <p>© 2025 AidFlow Ninja — Comunidad descentralizada</p>
 
-
-
-
+    <div class="footer-links">
+      <a href="terminos.html">Términos y Condiciones</a>
+      <a href="contacto.html">Contacto</a>
+    </div>
+  </div>
+</footer>
+<script src="js/main.js"></script>
 </body>
 </html>
