@@ -1,36 +1,4 @@
-﻿function guardarUsuario() {
-  localStorage.setItem("aidflow_usuario", JSON.stringify(usuario));
-}
-
-function cargarUsuario() {
-  const data = localStorage.getItem("aidflow_usuario");
-  if (data) {
-    usuario = JSON.parse(data);
-  }
-}
-
-
-/*************************
- * ESTADO DEL USUARIO
- *************************/
-let usuario = {
-  nivelActual: 1,
-  tramoNivel1: 0, // 0 a 4
-  shuriken: 0,
-  nivel2Desbloqueado: false
-};
-
-/*************************
- * CONFIGURACIÓN DE NIVELES
- *************************/
-const NIVELES = {
-  1: {
-    nombre: "Ninja",
-    tramos: 4
-  },
-  2: {
-    nombre: "Avanzado"
-/*************************
+﻿/*************************
  * CONFIGURACIÓN GENERAL
  *************************/
 const NIVELES = {
