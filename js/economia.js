@@ -1,48 +1,37 @@
-﻿// js/economia.js
+﻿// ===============================
+// ECONOMÍA AIDFLOW NINJA
+// ===============================
 
-export const usuarioBase = {
-  nivel: 1, // SIEMPRE arranca en 1
+const ECONOMIA = {
+  monedaInterna: "Shuriken",
+  tramosPorCiclo: 4,
 
-  ciclo: {
-    activo: true,
-    etapa: 1,          // 1 a 4
-    balance: 0,
-    tope: 50,          // cambia según nivel
-    completo: false
-  },
-
-  premios: {
-    saldo: 0
-  },
-
-  shuriken: 0
+  niveles: {
+    nivel1: {
+      nombre: "Ninja",
+      cicloMaximo: 50,
+      tramos: 4
+    },
+    nivel2: {
+      nombre: "Avanzado",
+      cicloMaximo: 120,
+      tramos: 4
+    },
+    nivel3: {
+      nombre: "Experto",
+      cicloMaximo: 300,
+      tramos: 4
+    }
+  }
 };
 
-
-export function acreditarPremio(usuario, monto) {
-  const espacioCiclo = usuario.ciclo.tope - usuario.ciclo.balance;
-
-  if (espacioCiclo > 0) {
-    const alCiclo = Math.min(monto, espacioCiclo);
-    usuario.ciclo.balance += alCiclo;
-
-    if (usuario.ciclo.balance >= usuario.ciclo.tope) {
-      usuario.ciclo.completo = true;
-      usuario.ciclo.activo = false;
-    }
-
-    usuario.premios.saldo += (monto - alCiclo);
-  } else {
-    usuario.premios.saldo += monto;
-  }
+function calcularTramo(nivel) {
+  const data = ECONOMIA.niveles[nivel];
+  if (!data) return null;
+  return data.cicloMaximo / data.tramos;
 }
 
+// Exponer al navegador (forma correcta sin módulos)
+window.ECONOMIA = ECONOMIA;
+window.calcularTramo = calcularTramo;
 
-// TEST LOCAL
-const usuario = JSON.parse(JSON.stringify(usuarioBase));
-
-usuario.ciclo.balance = 45;
-
-acreditarPremio(usuario, 100);
-
-console.log(usuario);
