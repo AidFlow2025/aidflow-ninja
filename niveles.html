@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>AidFlow Ninja</title>
+  <title>Niveles | AidFlow Ninja</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/ninja.css">
@@ -20,7 +20,7 @@
     <ul class="nav-links" id="navMenu">
       <li><a href="index.html">Inicio</a></li>
       <li><a href="como-funciona.html">Cómo Funciona</a></li>
-      <li><a href="niveles.html">Niveles</a></li>
+      <li><a href="niveles.html" class="active">Niveles</a></li>
       <li><a href="referidos.html">Referidos</a></li>
       <li><a href="dao.html">DAO</a></li>
       <li><a href="juegos.html">Juegos</a></li>
@@ -35,78 +35,97 @@
   <section class="hero">
     <h1>Niveles de Participación</h1>
     <p class="hero-text">
-      Elegí tu camino dentro de AidFlow Ninja. Cada nivel desbloquea nuevas
-      oportunidades, beneficios y participación en la comunidad.
+      Todos los usuarios comienzan como <strong>Ninja</strong>.
+      A medida que completás ciclos, desbloqueás nuevos niveles
+      y más participación dentro del ecosistema AidFlow Ninja.
     </p>
   </section>
 
   <section class="features">
 
+    <!-- NIVEL 1 -->
     <div class="card glow">
       <span class="badge">Nivel 1</span>
       <h2>Ninja</h2>
       <p>El punto de entrada al sistema.</p>
+
       <ul class="features-list">
-        <li>Aporte inicial accesible</li>
-        <li>Participación en ciclos básicos</li>
-        <li>Acceso a juegos comunitarios</li>
-        <li>Ingreso por ayuda mutua</li>
+        <li>✔ Acceso inmediato</li>
+        <li>✔ Participación en ciclos</li>
+        <li>✔ Shuriken para duelos y torneos</li>
+        <li>✔ Ingresos por ayuda mutua</li>
       </ul>
-      <a href="#" class="btn primary">Unirme como Ninja</a>
 
-<p style="margin-top:10px; font-size:0.9rem; opacity:0.8;">
-  Todos los participantes comienzan en este nivel.
-  El pase Ninja puede adquirirse nuevamente para
-  volver a participar en nuevos ciclos.
-</p>
+      <a href="#" class="btn primary">Adquirir Pase Ninja</a>
 
+      <!-- CICLO -->
+      <div class="ciclo-box">
+        <p class="ciclo-title">Progreso del ciclo</p>
 
+        <div class="progress-bar">
+          <div class="progress-fill" id="progreso-nivel1"></div>
+        </div>
+
+        <div class="tramos">
+          <span class="tramo">1</span>
+          <span class="tramo">2</span>
+          <span class="tramo">3</span>
+          <span class="tramo">4</span>
+        </div>
+
+        <p class="ciclo-info" id="info-nivel1">
+          Tramos completados: 0 / 4
+        </p>
+      </div>
+
+      <p class="shuriken-info" id="shuriken-nivel1">
+        Shuriken disponibles: 0
+      </p>
+
+      <p style="margin-top:10px; font-size:0.9rem; opacity:0.8;">
+        Todos los usuarios comienzan en este nivel.
+        El Pase Ninja puede adquirirse nuevamente
+        para iniciar un nuevo ciclo.
+      </p>
     </div>
 
-
-    <div class="card glow">
+    <!-- NIVEL 2 -->
+    <div class="card glow locked">
       <span class="badge">Nivel 2</span>
       <h2>Avanzado</h2>
-      <p>Para quienes buscan mayor impacto.</p>
+      <p>Desbloqueable tras completar ciclos.</p>
+
       <ul class="features-list">
-        <li>Ciclos más rápidos</li>
-        <li>Mayor peso en el sistema</li>
-        <li>Acceso a torneos especiales</li>
-        <li>Mejores retornos</li>
+        <li>✔ Ciclos optimizados</li>
+        <li>✔ Mayor impacto en el sistema</li>
+        <li>✔ Acceso a torneos especiales</li>
       </ul>
-      <a href="#" class="btn primary">Subir a Avanzado</a>
+
+      <button class="btn disabled" disabled>
+        Bloqueado
+      </button>
     </div>
 
-    <div class="card glow">
+    <!-- NIVEL 3 -->
+    <div class="card glow locked">
       <span class="badge">Nivel 3</span>
       <h2>Experto</h2>
-      <p>El núcleo del ecosistema.</p>
+      <p>Nivel estratégico del ecosistema.</p>
+
       <ul class="features-list">
-        <li>Máxima participación</li>
-        <li>Acceso al Fondo DAO</li>
-        <li>Votaciones y decisiones</li>
-        <li>Beneficios premium</li>
+        <li>✔ Participación en DAO</li>
+        <li>✔ Ranking y recompensas</li>
+        <li>✔ Decisiones comunitarias</li>
       </ul>
-      <a href="#" class="btn primary">Convertirme en Experto</a>
+
+      <button class="btn disabled" disabled>
+        Bloqueado
+      </button>
     </div>
 
-  </section>
-
-  <section class="features" style="margin-top:80px;">
-    <h2>Comparativa rápida</h2>
-
-    <div class="card">
-      <ul class="features-list">
-        <li>✔ Entrada progresiva por niveles</li>
-        <li>✔ Beneficios acumulativos</li>
-        <li>✔ Juegos y torneos desbloqueables</li>
-        <li>✔ Participación real en decisiones</li>
-      </ul>
-    </div>
   </section>
 
 </main>
-
 
 <footer class="footer">
   <div class="footer-container">
@@ -118,6 +137,7 @@
     </div>
   </div>
 </footer>
+
 <script src="js/economia.js"></script>
 <script src="js/main.js"></script>
 </body>
