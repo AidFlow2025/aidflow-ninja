@@ -35,3 +35,26 @@ function calcularTramo(nivel) {
 window.ECONOMIA = ECONOMIA;
 window.calcularTramo = calcularTramo;
 
+function aplicarGanancia(nivel, saldoActual, ganancia) {
+  const data = ECONOMIA.niveles[nivel];
+  if (!data) return null;
+
+  const tramoValor = data.cicloMaximo / data.tramos;
+  let nuevoSaldo = saldoActual + ganancia;
+
+  let tramosCompletados = Math.floor(nuevoSaldo / tramoValor);
+  if (tramosCompletados > data.tramos) {
+    tramosCompletados = data.tramos;
+  }
+
+  return {
+    nuevoSaldo,
+    tramoValor,
+    tramosCompletados,
+    retiroHabilitado: tramosCompletados > 0
+  };
+}
+
+window.aplicarGanancia = aplicarGanancia;
+
+
