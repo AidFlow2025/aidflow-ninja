@@ -54,6 +54,17 @@ function avanzarTramoNivel1() {
  *************************/
 function desbloquearNivel2() {
   usuario.nivel2Desbloqueado = true;
+
+  const card = document.getElementById("nivel2-card");
+  const btn = document.getElementById("btn-nivel2");
+
+  if (card && btn) {
+    card.classList.remove("locked");
+    btn.classList.remove("disabled");
+    btn.disabled = false;
+    btn.textContent = "Subir a Avanzado";
+  }
+
   console.log("✅ Nivel 2 desbloqueado");
   alert("🎉 ¡Desbloqueaste el Nivel Avanzado!");
 }
@@ -63,4 +74,8 @@ function desbloquearNivel2() {
  *************************/
 document.addEventListener("DOMContentLoaded", () => {
   actualizarUITramoNivel1();
+
+  if (usuario.nivel2Desbloqueado) {
+    desbloquearNivel2();
+  }
 });
