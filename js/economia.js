@@ -68,6 +68,17 @@ function avanzarTramoNivel1() {
 }
 
 /*************************
+ * SHURIKEN - DUELOS
+ *************************/
+function ganarShuriken(cantidad = 1) {
+  usuario.shuriken += cantidad;
+  guardarUsuario();
+  actualizarUITramoNivel1();
+
+  console.log(`🥷 Ganaste ${cantidad} shuriken`);
+}
+
+/*************************
  * DESBLOQUEO NIVEL 2
  *************************/
 function desbloquearNivel2() {
@@ -95,3 +106,29 @@ document.addEventListener("DOMContentLoaded", () => {
     desbloquearNivel2();
   }
 });
+
+/*************************
+ * RANKING DE DUELOS
+ *************************/
+let rankingDuelos = JSON.parse(
+  localStorage.getItem("aidflow_ranking_duelos")
+) || [];
+
+function registrarVictoriaDuelo(userId) {
+  const entry = rankingDuelos.find(u => u.id === userId);
+
+  if (entry) {
+    entry.victorias++;
+  } else {
+    rankingDuelos.push({
+      id: userId,
+      victorias: 1
+    });
+  }
+
+  rankingDuelos.sort((a, b) => b.victorias - a.victorias);
+  localStorage.setItem(
+    "aidflow_ranking_duelos",
+    JSON.stringify(rankingDuelos)
+  );
+}
