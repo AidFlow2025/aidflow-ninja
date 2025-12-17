@@ -11,6 +11,7 @@ const NIVELES = {
  * ESTADO DEL USUARIO
  *************************/
 let usuario = {
+  nivel: 1,
   tramoNivel1: 0,
   shuriken: 0,
   saldo: 0,
@@ -73,6 +74,7 @@ function avanzarTramoNivel1() {
 function ganarShuriken(cantidad = 1) {
   usuario.shuriken += cantidad;
   guardarUsuario();
+  actualizarUIShuriken();
   actualizarUITramoNivel1();
 
   console.log(`🥷 Ganaste ${cantidad} shuriken`);
@@ -101,6 +103,7 @@ function desbloquearNivel2() {
 document.addEventListener("DOMContentLoaded", () => {
   cargarUsuario();
   actualizarUITramoNivel1();
+  actualizarUIShuriken();
 
   if (usuario.nivel2Desbloqueado) {
     desbloquearNivel2();
@@ -132,3 +135,12 @@ function registrarVictoriaDuelo(userId) {
     JSON.stringify(rankingDuelos)
   );
 }
+
+
+function actualizarUIShuriken() {
+  const el = document.getElementById("shuriken-nivel1");
+  if (!el) return;
+
+  el.textContent = `Shuriken disponibles: ${usuario.shuriken}`;
+}
+
