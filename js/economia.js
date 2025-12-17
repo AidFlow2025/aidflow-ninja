@@ -13,7 +13,7 @@ function cargarUsuario() {
 /*************************
  * ESTADO DEL USUARIO
  *************************/
-const usuario = {
+let usuario = {
   nivelActual: 1,
   tramoNivel1: 0, // 0 a 4
   shuriken: 0,
