@@ -1,4 +1,16 @@
-﻿/*************************
+﻿function guardarUsuario() {
+  localStorage.setItem("aidflow_usuario", JSON.stringify(usuario));
+}
+
+function cargarUsuario() {
+  const data = localStorage.getItem("aidflow_usuario");
+  if (data) {
+    usuario = JSON.parse(data);
+  }
+}
+
+
+/*************************
  * ESTADO DEL USUARIO
  *************************/
 const usuario = {
@@ -39,13 +51,16 @@ function actualizarUITramoNivel1() {
  * AVANZAR TRAMO
  *************************/
 function avanzarTramoNivel1() {
-  if (usuario.tramoNivel1 >= NIVELES[1].tramos) return;
+  if (usuario.tramoNivel1 < 4) {
+    usuario.tramoNivel1++;
+    actualizarUITramoNivel1();
 
-  usuario.tramoNivel1++;
-  actualizarUITramoNivel1();
+    if (usuario.tramoNivel1 === 4) {
+      usuario.nivel2Desbloqueado = true;
+      desbloquearNivel2();
+    }
 
-  if (usuario.tramoNivel1 === NIVELES[1].tramos) {
-    desbloquearNivel2();
+    guardarUsuario();
   }
 }
 
@@ -73,9 +88,11 @@ function desbloquearNivel2() {
  * INIT
  *************************/
 document.addEventListener("DOMContentLoaded", () => {
+  cargarUsuario();
   actualizarUITramoNivel1();
 
   if (usuario.nivel2Desbloqueado) {
     desbloquearNivel2();
   }
 });
+
