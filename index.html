@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="css/main.css">
 </head>
+
 <body>
 
 <header class="header">
@@ -31,6 +32,7 @@
 
 <main class="container">
 
+  <!-- HERO -->
   <section class="hero">
     <h1>AidFlow Ninja</h1>
 
@@ -50,6 +52,45 @@
     </div>
   </section>
 
+  <!-- ECONOMÍA / PROGRESO -->
+  <section class="economia-card">
+    <h2>⚔️ Progreso del Ninja</h2>
+
+    <div id="shuriken-nivel1" class="badge">
+      Shuriken disponibles: 0
+    </div>
+
+    <div class="progress-bar">
+      <div id="progreso-nivel1" class="progress"></div>
+    </div>
+
+    <p id="info-nivel1">
+      Tramos completados: 0 / 4
+    </p>
+  </section>
+
+  <!-- NIVEL 2 -->
+  <section class="nivel-card locked" id="nivel2-card">
+    <h3>Nivel Avanzado</h3>
+    <button id="btn-nivel2" class="btn disabled" disabled>
+      Bloqueado
+    </button>
+  </section>
+
+  <!-- TORNEOS -->
+  <section class="torneos-card">
+    <h2>🏆 Torneos</h2>
+
+    <p id="torneos-status">
+      🔒 Torneos bloqueados hasta alcanzar 100 usuarios activos.
+    </p>
+
+    <button id="btn-torneo" class="btn secondary" disabled>
+      Modo entrenamiento
+    </button>
+  </section>
+
+  <!-- FEATURES -->
   <section class="features">
     <h2>¿Por qué AidFlow Ninja?</h2>
 
@@ -63,7 +104,6 @@
 
 </main>
 
-
 <footer class="footer">
   <div class="footer-container">
     <p>© 2025 AidFlow Ninja — Comunidad descentralizada</p>
@@ -74,7 +114,11 @@
     </div>
   </div>
 </footer>
+
+<!-- SCRIPTS -->
 <script src="js/economia.js"></script>
 <script src="js/main.js"></script>
+
 </body>
 </html>
+

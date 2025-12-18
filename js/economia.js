@@ -7,10 +7,33 @@ const NIVELES = {
   3: {}
 };
 
+const SISTEMA = {
+  usuariosMinimosTorneos: 100
+};
+
+const TORNEO = {
+  pozo: 100,      // dinero total a repartir
+  ganadores: 20   // primeros 20 cobran
+};
+
+/*************************
+ * DAO
+ *************************/
+let DAO = {
+  fondo: parseFloat(localStorage.getItem("aidflow_dao_fondo")) || 1000
+};
+
+/*************************
+ * USUARIOS ACTIVOS (mock)
+ *************************/
+let usuariosActivos =
+  parseInt(localStorage.getItem("aidflow_usuarios_activos")) || 1;
+
 /*************************
  * ESTADO DEL USUARIO
  *************************/
 let usuario = {
+  id: "usuario_local",
   nivel: 1,
   tramoNivel1: 0,
   shuriken: 0,
@@ -27,8 +50,36 @@ function guardarUsuario() {
 
 function cargarUsuario() {
   const data = localStorage.getItem("aidflow_usuario");
-  if (data) {
-    usuario = JSON.parse(data);
+  if (data) usuario = JSON.parse(data);
+}
+
+function guardarDAO() {
+  localStorage.setItem("aidflow_dao_fondo", DAO.fondo);
+}
+
+/*************************
+ * TORNEOS
+ *************************/
+function torneosHabilitados() {
+  return usuariosActivos >= SISTEMA.usuariosMinimosTorneos;
+}
+
+function verificarEstadoTorneos() {
+  const status = document.getElementById("torneos-status");
+  const btn = document.getElementById("btn-torneo");
+
+  if (!status || !btn) return;
+
+  if (torneosHabilitados()) {
+    status.textContent = "🏆 Torneos ACTIVOS — Premios en dinero real";
+    btn.textContent = "Entrar al Torneo";
+    btn.disabled = false;
+    btn.classList.remove("disabled");
+  } else {
+    status.textContent = `🔒 Torneos bloqueados (${usuariosActivos}/${SISTEMA.usuariosMinimosTorneos})`;
+    btn.textContent = "Modo entrenamiento";
+    btn.disabled = true;
+    btn.classList.add("disabled");
   }
 }
 
@@ -39,9 +90,11 @@ function actualizarUITramoNivel1() {
   const progreso = document.getElementById("progreso-nivel1");
   const info = document.getElementById("info-nivel1");
   const shurikenInfo = document.getElementById("shuriken-nivel1");
+  const saldoInfo = document.getElementById("saldo-usuario");
 
   if (progreso && info) {
-    const porcentaje = (usuario.tramoNivel1 / NIVELES[1].tramos) * 100;
+    const porcentaje =
+      (usuario.tramoNivel1 / NIVELES[1].tramos) * 100;
     progreso.style.width = porcentaje + "%";
     info.textContent = `Tramos completados: ${usuario.tramoNivel1} / ${NIVELES[1].tramos}`;
   }
@@ -49,10 +102,14 @@ function actualizarUITramoNivel1() {
   if (shurikenInfo) {
     shurikenInfo.textContent = `Shuriken disponibles: ${usuario.shuriken}`;
   }
+
+  if (saldoInfo) {
+    saldoInfo.textContent = `Saldo disponible: $${usuario.saldo.toFixed(2)}`;
+  }
 }
 
 /*************************
- * AVANZAR TRAMO
+ * AVANZAR TRAMO NIVEL 1
  *************************/
 function avanzarTramoNivel1() {
   if (usuario.tramoNivel1 < NIVELES[1].tramos) {
@@ -69,15 +126,43 @@ function avanzarTramoNivel1() {
 }
 
 /*************************
- * SHURIKEN - DUELOS
+ * SHURIKEN (SOLO DUELOS)
  *************************/
 function ganarShuriken(cantidad = 1) {
   usuario.shuriken += cantidad;
   guardarUsuario();
-  actualizarUIShuriken();
+  actualizarUITramoNivel1();
+}
+
+/*************************
+ * TORNEOS – PAGOS DESDE DAO
+ *************************/
+function pagarTorneo(ranking) {
+  if (!torneosHabilitados()) {
+    console.warn("🎯 Torneo en modo entrenamiento");
+    return;
+  }
+
+  if (DAO.fondo < TORNEO.pozo) {
+    console.warn("❌ DAO sin fondos suficientes");
+    return;
+  }
+
+  const ganadores = ranking.slice(0, TORNEO.ganadores);
+  const premio = TORNEO.pozo / ganadores.length;
+
+  ganadores.forEach(jugador => {
+    if (jugador.id === usuario.id) {
+      usuario.saldo += premio;
+    }
+  });
+
+  DAO.fondo -= TORNEO.pozo;
+  guardarDAO();
+  guardarUsuario();
   actualizarUITramoNivel1();
 
-  console.log(`🥷 Ganaste ${cantidad} shuriken`);
+  alert("🏆 Torneo finalizado — premios acreditados");
 }
 
 /*************************
@@ -93,41 +178,19 @@ function desbloquearNivel2() {
     btn.disabled = false;
     btn.textContent = "Subir a Avanzado";
   }
-
-  console.log("✅ Nivel 2 desbloqueado");
 }
-
-/*************************
- * INIT
- *************************/
-document.addEventListener("DOMContentLoaded", () => {
-  cargarUsuario();
-  actualizarUITramoNivel1();
-  actualizarUIShuriken();
-
-  if (usuario.nivel2Desbloqueado) {
-    desbloquearNivel2();
-  }
-});
 
 /*************************
  * RANKING DE DUELOS
  *************************/
-let rankingDuelos = JSON.parse(
-  localStorage.getItem("aidflow_ranking_duelos")
-) || [];
+let rankingDuelos =
+  JSON.parse(localStorage.getItem("aidflow_ranking_duelos")) || [];
 
 function registrarVictoriaDuelo(userId) {
   const entry = rankingDuelos.find(u => u.id === userId);
 
-  if (entry) {
-    entry.victorias++;
-  } else {
-    rankingDuelos.push({
-      id: userId,
-      victorias: 1
-    });
-  }
+  if (entry) entry.victorias++;
+  else rankingDuelos.push({ id: userId, victorias: 1 });
 
   rankingDuelos.sort((a, b) => b.victorias - a.victorias);
   localStorage.setItem(
@@ -136,11 +199,16 @@ function registrarVictoriaDuelo(userId) {
   );
 }
 
+/*************************
+ * INIT
+ *************************/
+document.addEventListener("DOMContentLoaded", () => {
+  cargarUsuario();
+  actualizarUITramoNivel1();
 
-function actualizarUIShuriken() {
-  const el = document.getElementById("shuriken-nivel1");
-  if (!el) return;
+  if (usuario.nivel2Desbloqueado) {
+    desbloquearNivel2();
+  }
 
-  el.textContent = `Shuriken disponibles: ${usuario.shuriken}`;
-}
-
+  verificarEstadoTorneos();
+});
