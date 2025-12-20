@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Ninja</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body>
+
+<!-- PROTECCIÓN -->
+<script src="../js/auth.js"></script>
+<script>
+  protegerRuta("user");
+</script>
+
+<main class="container">
+
+  <h1>🥷 Panel del Ninja</h1>
+
+  <!-- PROGRESO -->
+  <section class="card glow">
+    <h2>⚔️ Progreso del Ninja</h2>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progreso-nivel1"></div>
+    </div>
+
+    <p id="info-nivel1">Tramos completados: 0 / 4</p>
+  </section>
+
+  <!-- ECONOMÍA -->
+  <section class="card">
+    <h2>💰 Economía</h2>
+
+    <p id="shuriken-nivel1">Shuriken disponibles: 0</p>
+
+    <p>Saldo disponible: <strong id="saldo-usuario">$0.00</strong></p>
+
+    <button class="btn primary"
+            id="btn-retiro"
+            onclick="retirarFondos()"
+            disabled>
+      Retirar fondos
+    </button>
+
+    <p id="retiro-bloqueado"
+       style="opacity:0.7; font-size:0.9rem;">
+      🔒 Los retiros se habilitan por tramos completados del ciclo.
+    </p>
+  </section>
+
+  <!-- TORNEOS -->
+  <section class="card">
+    <h2>🏆 Torneos</h2>
+
+    <p id="torneos-status">
+      🔒 Torneos bloqueados hasta alcanzar 100 usuarios activos.
+    </p>
+
+    <button class="btn secondary" id="btn-torneo" disabled>
+      Modo entrenamiento
+    </button>
+  </section>
+
+  <!-- RANKING -->
+  <section class="card">
+    <h2>📊 Ranking Ninja (Duelos)</h2>
+    <ul id="ranking-list"></ul>
+  </section>
+  <section class="card">
+    <h2>📊 Historial del Ninja</h2>
+
+    <p>Ciclos completados: <strong id="hist-ciclos">0</strong></p>
+    <p>Total ganado: <strong id="hist-total">$0.00</strong></p>
+    <p>Shuriken ganados: <strong id="hist-shuriken">0</strong></p>
+    <p>Último ciclo: <strong id="hist-fecha">—</strong></p>
+  </section>
+
+  <!-- RECOMPRA -->
+  <button class="btn secondary"
+          id="btn-recompra"
+          style="display:none;"
+          onclick="recomprarPaseNinja()">
+    🔁 Recomprar Pase Ninja
+  </button>
+
+  <button class="btn secondary" onclick="logout()">
+    Cerrar sesión
+  </button>
+
+</main>
+
+<footer class="footer">
+  <p>© 2025 AidFlow Ninja</p>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="../js/economia.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/main.js"></script>
+
+</body>
+</html>

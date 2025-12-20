@@ -12,22 +12,18 @@ const SISTEMA = {
 };
 
 const TORNEO = {
-  pozo: 100,      // dinero total a repartir
-  ganadores: 20   // primeros 20 cobran
+  pozo: 100,
+  ganadores: 20
 };
+
+const RECOMPENSAS_KEY = "aidflow_shuriken_diario";
 
 /*************************
  * DAO
  *************************/
 let DAO = {
-  fondo: parseFloat(localStorage.getItem("aidflow_dao_fondo")) || 1000
+  fondo: 1000
 };
-
-/*************************
- * USUARIOS ACTIVOS (mock)
- *************************/
-let usuariosActivos =
-  parseInt(localStorage.getItem("aidflow_usuarios_activos")) || 1;
 
 /*************************
  * ESTADO DEL USUARIO
@@ -35,10 +31,22 @@ let usuariosActivos =
 let usuario = {
   id: "usuario_local",
   nivel: 1,
+
+  // Ciclo actual
   tramoNivel1: 0,
-  shuriken: 0,
   saldo: 0,
-  nivel2Desbloqueado: false
+
+  // Recursos
+  shuriken: 0,
+
+  // Estados
+  nivel2Desbloqueado: false,
+
+  // 📊 Historial
+  ciclosCompletados: 0,
+  totalGanado: 0,
+  shurikenGanados: 0,
+  ultimoCiclo: null
 };
 
 /*************************
@@ -54,33 +62,23 @@ function cargarUsuario() {
 }
 
 function guardarDAO() {
-  localStorage.setItem("aidflow_dao_fondo", DAO.fondo);
+  localStorage.setItem("aidflow_dao", JSON.stringify(DAO));
+}
+
+function cargarDAO() {
+  const data = localStorage.getItem("aidflow_dao");
+  if (data) DAO = JSON.parse(data);
 }
 
 /*************************
- * TORNEOS
+ * USUARIOS ACTIVOS (mock)
  *************************/
-function torneosHabilitados() {
-  return usuariosActivos >= SISTEMA.usuariosMinimosTorneos;
+function obtenerCantidadUsuarios() {
+  return Number(localStorage.getItem("aidflow_usuarios_activos")) || 1;
 }
 
-function verificarEstadoTorneos() {
-  const status = document.getElementById("torneos-status");
-  const btn = document.getElementById("btn-torneo");
-
-  if (!status || !btn) return;
-
-  if (torneosHabilitados()) {
-    status.textContent = "🏆 Torneos ACTIVOS — Premios en dinero real";
-    btn.textContent = "Entrar al Torneo";
-    btn.disabled = false;
-    btn.classList.remove("disabled");
-  } else {
-    status.textContent = `🔒 Torneos bloqueados (${usuariosActivos}/${SISTEMA.usuariosMinimosTorneos})`;
-    btn.textContent = "Modo entrenamiento";
-    btn.disabled = true;
-    btn.classList.add("disabled");
-  }
+function torneosHabilitados() {
+  return obtenerCantidadUsuarios() >= SISTEMA.usuariosMinimosTorneos;
 }
 
 /*************************
@@ -93,8 +91,7 @@ function actualizarUITramoNivel1() {
   const saldoInfo = document.getElementById("saldo-usuario");
 
   if (progreso && info) {
-    const porcentaje =
-      (usuario.tramoNivel1 / NIVELES[1].tramos) * 100;
+    const porcentaje = (usuario.tramoNivel1 / NIVELES[1].tramos) * 100;
     progreso.style.width = porcentaje + "%";
     info.textContent = `Tramos completados: ${usuario.tramoNivel1} / ${NIVELES[1].tramos}`;
   }
@@ -104,18 +101,19 @@ function actualizarUITramoNivel1() {
   }
 
   if (saldoInfo) {
-    saldoInfo.textContent = `Saldo disponible: $${usuario.saldo.toFixed(2)}`;
+    saldoInfo.textContent = `$${usuario.saldo.toFixed(2)}`;
   }
 }
 
 /*************************
- * AVANZAR TRAMO NIVEL 1
+ * AVANZAR TRAMO
  *************************/
 function avanzarTramoNivel1() {
   if (usuario.tramoNivel1 < NIVELES[1].tramos) {
     usuario.tramoNivel1++;
     guardarUsuario();
     actualizarUITramoNivel1();
+    actualizarEstadoCiclo();
 
     if (usuario.tramoNivel1 === NIVELES[1].tramos) {
       usuario.nivel2Desbloqueado = true;
@@ -126,16 +124,28 @@ function avanzarTramoNivel1() {
 }
 
 /*************************
- * SHURIKEN (SOLO DUELOS)
+ * SHURIKEN — SOLO DUELOS / JUEGOS
  *************************/
 function ganarShuriken(cantidad = 1) {
   usuario.shuriken += cantidad;
+  usuario.shurikenGanados += cantidad;
+
   guardarUsuario();
   actualizarUITramoNivel1();
+
+  if (typeof efectoShuriken === "function") {
+    efectoShuriken(cantidad);
+  }
+
+  if (typeof actualizarUIProgresoAnimado === "function") {
+    actualizarUIProgresoAnimado();
+  }
+
+  console.log(`🥷 Ganaste ${cantidad} shuriken`);
 }
 
 /*************************
- * TORNEOS – PAGOS DESDE DAO
+ * TORNEOS — DINERO REAL
  *************************/
 function pagarTorneo(ranking) {
   if (!torneosHabilitados()) {
@@ -149,20 +159,85 @@ function pagarTorneo(ranking) {
   }
 
   const ganadores = ranking.slice(0, TORNEO.ganadores);
-  const premio = TORNEO.pozo / ganadores.length;
+  const premioBase = TORNEO.pozo / ganadores.length;
 
   ganadores.forEach(jugador => {
     if (jugador.id === usuario.id) {
-      usuario.saldo += premio;
+      usuario.saldo += premioBase;
+      usuario.totalGanado += premioBase;
     }
   });
 
   DAO.fondo -= TORNEO.pozo;
-  guardarDAO();
+
   guardarUsuario();
+  guardarDAO();
   actualizarUITramoNivel1();
 
-  alert("🏆 Torneo finalizado — premios acreditados");
+  console.log("🏆 Torneo pagado correctamente");
+}
+
+/*************************
+ * CIERRE DE CICLO
+ *************************/
+function cicloCompletado() {
+  return usuario.tramoNivel1 >= NIVELES[1].tramos;
+}
+
+function actualizarEstadoCiclo() {
+  const btnRetiro = document.getElementById("btn-retiro");
+  const btnRecompra = document.getElementById("btn-recompra");
+
+  if (!btnRetiro && !btnRecompra) return;
+
+  if (cicloCompletado()) {
+    if (btnRetiro) btnRetiro.disabled = false;
+    if (btnRecompra) btnRecompra.style.display = "block";
+  } else {
+    if (btnRetiro) btnRetiro.disabled = true;
+    if (btnRecompra) btnRecompra.style.display = "none";
+  }
+}
+
+/*************************
+ * RETIRO DE FONDOS
+ *************************/
+function retirarFondos() {
+  if (!cicloCompletado()) {
+    alert("⚠️ Aún no completaste el ciclo");
+    return;
+  }
+
+  usuario.ciclosCompletados++;
+  usuario.totalGanado += usuario.saldo;
+  usuario.ultimoCiclo = new Date().toISOString();
+
+  alert(`💰 Retiraste $${usuario.saldo.toFixed(2)}`);
+
+  usuario.saldo = 0;
+
+  guardarUsuario();
+  actualizarUITramoNivel1();
+}
+
+/*************************
+ * RECOMPRA PASE NINJA
+ *************************/
+function recomprarPaseNinja() {
+  if (!cicloCompletado()) {
+    alert("⚠️ Debés completar el ciclo primero");
+    return;
+  }
+
+  usuario.tramoNivel1 = 0;
+  usuario.saldo = 0;
+  usuario.nivel2Desbloqueado = false;
+
+  guardarUsuario();
+
+  alert("🥷 Nuevo ciclo iniciado");
+  actualizarUITramoNivel1();
+  actualizarEstadoCiclo();
 }
 
 /*************************
@@ -178,21 +253,28 @@ function desbloquearNivel2() {
     btn.disabled = false;
     btn.textContent = "Subir a Avanzado";
   }
+
+  console.log("✅ Nivel 2 desbloqueado");
 }
 
 /*************************
  * RANKING DE DUELOS
  *************************/
-let rankingDuelos =
-  JSON.parse(localStorage.getItem("aidflow_ranking_duelos")) || [];
+let rankingDuelos = JSON.parse(
+  localStorage.getItem("aidflow_ranking_duelos")
+) || [];
 
 function registrarVictoriaDuelo(userId) {
   const entry = rankingDuelos.find(u => u.id === userId);
 
-  if (entry) entry.victorias++;
-  else rankingDuelos.push({ id: userId, victorias: 1 });
+  if (entry) {
+    entry.victorias++;
+  } else {
+    rankingDuelos.push({ id: userId, victorias: 1 });
+  }
 
   rankingDuelos.sort((a, b) => b.victorias - a.victorias);
+
   localStorage.setItem(
     "aidflow_ranking_duelos",
     JSON.stringify(rankingDuelos)
@@ -200,15 +282,43 @@ function registrarVictoriaDuelo(userId) {
 }
 
 /*************************
+ * RECOMPENSAS DESDE JUEGOS
+ *************************/
+function evaluarRecompensa(score) {
+  const hoy = new Date().toDateString();
+
+  let registro = JSON.parse(localStorage.getItem(RECOMPENSAS_KEY)) || {
+    fecha: hoy,
+    shuriken: 0
+  };
+
+  if (registro.fecha !== hoy) {
+    registro = { fecha: hoy, shuriken: 0 };
+  }
+
+  const shurikenPorScore = Math.floor(score / 10);
+  const LIMITE_DIARIO = 3;
+
+  const disponibles = LIMITE_DIARIO - registro.shuriken;
+  const otorgar = Math.min(shurikenPorScore, disponibles);
+
+  if (otorgar > 0) {
+    ganarShuriken(otorgar);
+    registro.shuriken += otorgar;
+    localStorage.setItem(RECOMPENSAS_KEY, JSON.stringify(registro));
+  }
+}
+
+/*************************
  * INIT
  *************************/
 document.addEventListener("DOMContentLoaded", () => {
   cargarUsuario();
+  cargarDAO();
   actualizarUITramoNivel1();
+  actualizarEstadoCiclo();
 
   if (usuario.nivel2Desbloqueado) {
     desbloquearNivel2();
   }
-
-  verificarEstadoTorneos();
 });

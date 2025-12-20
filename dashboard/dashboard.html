@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Ninja — AidFlow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+<header class="dash-header">
+  <h1>🥷 Panel Ninja</h1>
+  <span id="ninjaName">Nivel: Recluta</span>
+</header>
+
+<main class="dashboard">
+
+  <!-- PROGRESO -->
+  <section class="card">
+    <h2>⚔️ Progreso del Ninja</h2>
+    <p>Shuriken disponibles: <strong id="shurikenCount">0</strong></p>
+    <p>Saldo retenido: <strong>$<span id="saldo">0.00</span></strong></p>
+    <button id="withdrawBtn" disabled>Retirar fondos</button>
+    <small>Los retiros se habilitan por tramos completados.</small>
+  </section>
+
+  <!-- CICLO -->
+  <section class="card">
+    <h2>📊 Ciclo</h2>
+    <p>Tramos completados: <strong><span id="tramos">0</span> / 4</strong></p>
+    <progress id="progressBar" value="0" max="4"></progress>
+  </section>
+
+  <!-- RANKING -->
+  <section class="card">
+    <h2>🏆 Ranking Ninja</h2>
+    <p id="rankingStatus">Bloqueado</p>
+  </section>
+
+  <!-- TORNEOS -->
+  <section class="card locked">
+    <h2>🏆 Torneos</h2>
+    <p>🔒 Torneos bloqueados hasta 100 usuarios activos</p>
+    <button disabled>Entrar a torneo</button>
+  </section>
+
+  <!-- ENTRENAMIENTO -->
+  <section class="card">
+    <h2>🎮 Modo Entrenamiento</h2>
+    <a href="../juegos.html" class="btn">Jugar</a>
+  </section>
+
+</main>
+
+<script src="dashboard.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mi Panel — AidFlow Ninja</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/ninja.css">
+</head>
+<body>
+
+<header class="header">
+  <nav class="navbar">
+    <div class="nav-left">
+      <span class="logo-text">🥷 AidFlow Ninja</span>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="niveles.html">Niveles</a></li>
+      <li><a href="juegos.html">Juegos</a></li>
+      <li><a href="dao.html">DAO</a></li>
+      <li><a href="#" onclick="logoutUsuario()">Salir</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="container">
+
+  <!-- PERFIL -->
+  <section class="card glow">
+    <h2>⚔️ Progreso del Ninja</h2>
+
+    <p id="nivel-actual">Nivel actual: Ninja</p>
+    <p id="shuriken-usuario">Shuriken disponibles: 0</p>
+    <p id="saldo-usuario">Saldo retenido: $0.00</p>
+  </section>
+
+  <!-- CICLO -->
+  <section class="card">
+    <h3>🔄 Ciclo actual</h3>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progreso-nivel1"></div>
+    </div>
+
+    <p id="info-nivel1">Tramos completados: 0 / 4</p>
+
+    <small>
+      Los retiros se habilitan por tramos completados del ciclo.
+    </small>
+  </section>
+
+  <!-- TORNEOS -->
+  <section class="card">
+    <h3>🏆 Torneos</h3>
+
+    <p id="estado-torneos">
+      🔒 Torneos bloqueados hasta alcanzar 100 usuarios activos.
+    </p>
+  </section>
+
+  <section class="card">
+  <h3>🎮 Ranking Survival Ninja</h3>
+
+  <ul id="ranking-survival-dashboard">
+    <li>Cargando ranking...</li>
+  </ul>
+
+  <p style="font-size:0.85rem; opacity:0.7; margin-top:6px;">
+    Los mejores puntajes del desafío de supervivencia.
+  </p>
+</section>
+
+
+  <!-- RANKING -->
+  <section class="card">
+    <h3>🏆 Ranking Ninja</h3>
+    <ul id="ranking-duelos">
+      <li>Sin datos aún</li>
+    </ul>
+  </section>
+
+</main>
+
+<script src="js/economia.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>

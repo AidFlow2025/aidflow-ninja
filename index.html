@@ -15,15 +15,11 @@
       <a href="index.html" class="logo-text">AidFlow Ninja</a>
     </div>
 
-    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+    <button class="menu-toggle" id="menuToggle">☰</button>
 
     <ul class="nav-links" id="navMenu">
-      <li><a href="index.html">Inicio</a></li>
       <li><a href="como-funciona.html">Cómo Funciona</a></li>
-      <li><a href="niveles.html">Niveles</a></li>
-      <li><a href="referidos.html">Referidos</a></li>
       <li><a href="dao.html">DAO</a></li>
-      <li><a href="juegos.html">Juegos</a></li>
       <li><a href="faq.html">FAQs</a></li>
       <li><a href="contacto.html">Contacto</a></li>
     </ul>
@@ -37,13 +33,13 @@
     <h1>AidFlow Ninja</h1>
 
     <p class="hero-text">
-      Una plataforma de ayuda mutua gamificada donde la comunidad crece unida,
-      participa en juegos, torneos y obtiene beneficios reales de forma transparente.
+      Competí, jugá y progresá en una plataforma de ayuda mutua gamificada.
+      Los ninjas más activos acceden a beneficios reales.
     </p>
 
     <div class="hero-actions">
-      <a href="niveles.html" class="btn primary">
-        Unirme como Ninja
+      <a href="dashboard/index.html" class="btn primary">
+        🥷 Unirme como Ninja
       </a>
 
       <a href="como-funciona.html" class="btn secondary">
@@ -52,42 +48,27 @@
     </div>
   </section>
 
-  <!-- ECONOMÍA / PROGRESO -->
-  <section class="economia-card">
-    <h2>⚔️ Progreso del Ninja</h2>
+  <!-- MINI JUEGO -->
+  <section class="card glow" id="mini-juego">
+    <h2>🎮 Ninja Survival</h2>
 
-    <div id="shuriken-nivel1" class="badge">
-      Shuriken disponibles: 0
-    </div>
+    <canvas id="gameCanvas" width="320" height="420"></canvas>
 
-    <div class="progress-bar">
-      <div id="progreso-nivel1" class="progress"></div>
-    </div>
+    <p id="game-score">Puntaje: 0</p>
 
-    <p id="info-nivel1">
-      Tramos completados: 0 / 4
+    <button class="btn primary" onclick="iniciarJuego()">
+      Jugar
+    </button>
+
+    <p style="font-size:0.85rem; opacity:.7;">
+      🥷 Cada 10 puntos ganás 1 Shuriken
     </p>
   </section>
 
-  <!-- NIVEL 2 -->
-  <section class="nivel-card locked" id="nivel2-card">
-    <h3>Nivel Avanzado</h3>
-    <button id="btn-nivel2" class="btn disabled" disabled>
-      Bloqueado
-    </button>
-  </section>
-
-  <!-- TORNEOS -->
-  <section class="torneos-card">
-    <h2>🏆 Torneos</h2>
-
-    <p id="torneos-status">
-      🔒 Torneos bloqueados hasta alcanzar 100 usuarios activos.
-    </p>
-
-    <button id="btn-torneo" class="btn secondary" disabled>
-      Modo entrenamiento
-    </button>
+  <!-- RANKING JUEGO -->
+  <section class="card">
+    <h3>🏆 Top 10 Ninja Survival</h3>
+    <ol id="ranking-juego"></ol>
   </section>
 
   <!-- FEATURES -->
@@ -95,30 +76,23 @@
     <h2>¿Por qué AidFlow Ninja?</h2>
 
     <ul class="features-list">
-      <li>✔ Sistema de ayuda mutua claro y automatizado</li>
-      <li>✔ Niveles de participación según tu compromiso</li>
-      <li>✔ Juegos, torneos y dinámicas comunitarias</li>
-      <li>✔ Fondo común con participación de la comunidad</li>
+      <li>✔ Ayuda mutua transparente</li>
+      <li>✔ Juegos y desafíos reales</li>
+      <li>✔ DAO comunitario</li>
+      <li>✔ Recompensas progresivas</li>
     </ul>
   </section>
 
 </main>
 
 <footer class="footer">
-  <div class="footer-container">
-    <p>© 2025 AidFlow Ninja — Comunidad descentralizada</p>
-
-    <div class="footer-links">
-      <a href="terminos.html">Términos y Condiciones</a>
-      <a href="contacto.html">Contacto</a>
-    </div>
-  </div>
+  <p>© 2025 AidFlow Ninja — Comunidad descentralizada</p>
 </footer>
 
 <!-- SCRIPTS -->
 <script src="js/economia.js"></script>
+<script src="js/game-survival.js"></script>
 <script src="js/main.js"></script>
 
 </body>
 </html>
-

@@ -2,25 +2,73 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Login — AidFlow Ninja</title>
+  <title>Admin — AidFlow Ninja</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
+<h1>Admin — AidFlow Ninja</h1>
 
-<main class="admin-login">
+<input
+  type="password"
+  id="admin-pass"
+  placeholder="Clave admin"
+/>
 
-  <h1>Acceso Administrador</h1>
+<button onclick="loginAdmin()">Entrar</button>
 
-  <form>
-    <input type="text" placeholder="Usuario" required>
-    <input type="password" placeholder="Contraseña" required>
+<p id="error-admin" style="color:red;"></p>
 
-    <button type="submit">Ingresar</button>
-  </form>
+<script src="../js/admin.js"></script>
 
+<main class="container">
+  <h1>🛠️ Panel Administrador</h1>
+
+  <section class="card">
+    <h2>💰 Fondo DAO</h2>
+    <p id="dao-fondo">$0</p>
+    <button onclick="resetDAO()">Resetear DAO</button>
+  </section>
+
+  <section class="card">
+    <h2>🏆 Configuración Torneos</h2>
+
+    <label>
+      Pozo del torneo ($):
+      <input type="number" id="input-pozo" />
+    </label>
+
+    <label>
+      Usuarios mínimos:
+      <input type="number" id="input-usuarios" />
+    </label>
+
+    <button onclick="guardarConfigTorneo()">Guardar cambios</button>
+  </section>
+
+  <section class="card">
+    <h2>👥 Usuarios Activos (simulado)</h2>
+    <p id="usuarios-activos"></p>
+
+    <button onclick="simularUsuarios(10)">+10 usuarios</button>
+    <button onclick="simularUsuarios(50)">+50 usuarios</button>
+  </section>
+
+  <section class="card">
+    <h2>♻️ Sistema</h2>
+    <button onclick="resetRanking()">Resetear Ranking</button>
+    <button onclick="resetTodo()">Resetear TODO</button>
+  </section>
+
+
+  
 </main>
+<script src="../js/auth.js"></script>
+<script>
+  protegerRuta("admin");
+</script>
 
+<script src="../js/economia.js"></script>
 <script src="../js/admin.js"></script>
 </body>
 </html>
