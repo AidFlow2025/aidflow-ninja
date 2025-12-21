@@ -1,23 +1,5 @@
 ﻿/* =========================
-   VARIABLES DE COLOR
-========================= */
-:root {
-  --bg-main: #020617;
-  --bg-card: #0f172a;
-  --border-soft: rgba(255,255,255,0.06);
-
-  --cyan-main: #38bdf8;
-  --cyan-soft: #22d3ee;
-
-  --red-ninja: #ef4444;
-  --red-dark: #dc2626;
-
-  --text-main: #e5e7eb;
-  --text-soft: #cbd5f5;
-}
-
-/* =========================
-   RESET BÁSICO
+   RESET
 ========================= */
 * {
   margin: 0;
@@ -25,12 +7,14 @@
   box-sizing: border-box;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
-  background: var(--bg-main);
-  color: var(--text-main);
+  font-family: "Inter", system-ui, sans-serif;
+  background: #0b0b0e;
+  color: #e5e7eb;
   line-height: 1.6;
 }
 
@@ -38,12 +22,12 @@ body {
    LINKS
 ========================= */
 a {
-  color: inherit;
   text-decoration: none;
+  color: inherit;
 }
 
 /* =========================
-   CONTENEDOR
+   CONTAINER
 ========================= */
 .container {
   max-width: 1100px;
@@ -52,73 +36,77 @@ a {
 }
 
 /* =========================
-   NAVBAR
+   HEADER / NAVBAR
 ========================= */
-header {
-  background: var(--bg-main);
-  border-bottom: 1px solid #0f172a;
+.header {
   position: sticky;
   top: 0;
   z-index: 1000;
+  background: rgba(11, 11, 14, 0.95);
+  border-bottom: 1px solid #1f1f24;
 }
 
 .navbar {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 15px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 64px;
 }
 
 .logo-text {
-  font-size: 1.2rem;
   font-weight: 700;
-  color: var(--cyan-main);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ef4444;
+  font-size: 0.95rem;
 }
 
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 24px;
+  gap: 28px;
 }
 
 .nav-links a {
-  font-weight: 500;
-  transition: color 0.2s ease;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
 }
 
 .nav-links a:hover {
-  color: var(--red-ninja);
+  opacity: 1;
+  color: #f87171;
 }
 
 .menu-toggle {
   display: none;
   background: none;
   border: none;
-  font-size: 1.8rem;
-  color: var(--text-main);
-  cursor: pointer;
+  color: #e5e7eb;
+  font-size: 1.5rem;
 }
 
 /* =========================
    HERO
 ========================= */
 .hero {
+  padding: 100px 20px 80px;
   text-align: center;
-  padding: 80px 20px;
 }
 
 .hero h1 {
   font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: 1px;
   margin-bottom: 20px;
 }
 
 .hero-text {
-  font-size: 1.1rem;
   max-width: 720px;
   margin: 0 auto 40px;
-  color: var(--text-soft);
+  font-size: 1.05rem;
+  color: #9ca3af;
 }
 
 .hero-actions {
@@ -129,192 +117,144 @@ header {
 }
 
 /* =========================
-   BOTONES
+   BUTTONS
 ========================= */
 .btn {
-  display: inline-block;
-  padding: 14px 32px;
-  border-radius: 999px;
+  padding: 14px 30px;
+  border-radius: 6px;
+  font-size: 0.85rem;
   font-weight: 600;
-  font-size: 0.95rem;
+  letter-spacing: 0.5px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn.primary {
-  background: linear-gradient(90deg, var(--cyan-soft), var(--cyan-main));
-  color: var(--bg-main);
+  background: linear-gradient(180deg, #ef4444, #991b1b);
+  color: #0b0b0e;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.25);
 }
 
 .btn.primary:hover {
-  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.35);
 }
 
 .btn.secondary {
-  border: 2px solid var(--cyan-main);
-  color: var(--cyan-main);
+  border: 1px solid #374151;
+  color: #d1d5db;
+  background: transparent;
 }
 
 .btn.secondary:hover {
-  background: var(--cyan-main);
-  color: var(--bg-main);
-}
-
-/* BOTÓN ROJO (peligro / acción fuerte) */
-.btn.danger {
-  background: linear-gradient(90deg, var(--red-ninja), var(--red-dark));
-  color: white;
-}
-
-.btn.danger:hover {
-  filter: brightness(1.1);
-}
-
-.btn:disabled,
-button[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
+  border-color: #ef4444;
+  color: #ef4444;
 }
 
 /* =========================
-   CARDS
+   SECTIONS
 ========================= */
-.card {
-  background: linear-gradient(145deg, var(--bg-card), var(--bg-main));
-  border-radius: 14px;
-  padding: 18px;
+.section {
+  padding: 80px 0;
+  border-top: 1px solid #1f1f24;
+}
+
+.section h2 {
+  font-size: 1.6rem;
+  margin-bottom: 24px;
+  font-weight: 700;
+}
+
+.section p {
+  max-width: 780px;
   margin-bottom: 18px;
-  border: 1px solid var(--border-soft);
-  box-shadow: 0 0 18px rgba(0,255,255,0.06);
-}
-
-.card.glow {
-  box-shadow:
-    0 0 20px rgba(56,189,248,0.25),
-    0 0 40px rgba(239,68,68,0.15);
-}
-
-.card h2, .card h3 {
-  margin-bottom: 12px;
-  color: var(--cyan-main);
-  font-weight: 600;
+  color: #cbd5e1;
 }
 
 /* =========================
-   PROGRESO
+   LISTS
 ========================= */
-.progress-bar {
-  width: 100%;
-  height: 12px;
-  background: var(--bg-main);
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 10px 0;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--cyan-soft), var(--cyan-main));
-  transition: width 0.4s ease;
-}
-
-/* =========================
-   FEATURES
-========================= */
-.features {
-  margin-top: 80px;
-}
-
-.features h2 {
-  font-size: 1.8rem;
-  margin-bottom: 25px;
-}
-
-.features-list {
+.list {
   list-style: none;
-  line-height: 2;
+  margin: 20px 0;
 }
 
-.features-list li::before {
-  content: "✔";
-  color: var(--red-ninja);
-  margin-right: 8px;
+.list li {
+  padding-left: 14px;
+  margin-bottom: 10px;
+  position: relative;
+  color: #d1d5db;
 }
 
-/* =========================
-   JUEGO
-========================= */
-#gameCanvas {
-  background: var(--bg-main);
-  border: 2px solid var(--red-ninja);
-  border-radius: 12px;
-  display: block;
-  margin: 12px auto;
-}
-
-#game-score {
-  text-align: center;
-  font-weight: bold;
-  color: var(--cyan-soft);
-}
-
-/* =========================
-   UTILIDADES
-========================= */
-.locked {
-  opacity: 0.5;
-  filter: grayscale(100%);
-  pointer-events: none;
-}
-
-.badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(239,68,68,0.15);
-  color: var(--red-ninja);
-  font-size: 0.8rem;
+.list li::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: #ef4444;
 }
 
 /* =========================
    FOOTER
 ========================= */
 .footer {
-  margin-top: 100px;
-  border-top: 1px solid #0f172a;
-  padding: 30px 20px;
+  padding: 40px 20px;
   text-align: center;
-  color: var(--text-soft);
+  border-top: 1px solid #1f1f24;
+  color: #9ca3af;
+  font-size: 0.8rem;
 }
 
 /* =========================
    RESPONSIVE
 ========================= */
 @media (max-width: 768px) {
-  .menu-toggle { display: block; }
+  .menu-toggle {
+    display: block;
+  }
 
   .nav-links {
     position: absolute;
-    top: 65px;
+    top: 64px;
     left: 0;
     right: 0;
-    background: var(--bg-main);
+    background: #0b0b0e;
     flex-direction: column;
     align-items: center;
     gap: 18px;
     padding: 20px 0;
     display: none;
-    border-bottom: 1px solid #0f172a;
+    border-bottom: 1px solid #1f1f24;
   }
 
-  .nav-links.active { display: flex; }
-
-  .hero {
-    padding: 60px 10px;
+  .nav-links.active {
+    display: flex;
   }
 
   .hero h1 {
     font-size: 2.1rem;
   }
+}
+/* === GAME CANVAS === */
+#gameCanvas {
+  display: block;
+  margin: 20px auto;
+  background: #111;
+  border: 2px solid #7f1d1d; /* rojo oscuro */
+  border-radius: 6px;
+}
+
+.terminos-check {
+  display: block;
+  font-size: 0.75rem;
+  margin: 14px 0;
+  opacity: 0.8;
+}
+
+.terminos-check input {
+  margin-right: 6px;
+}
+.terminos-home a {
+  text-decoration: underline;
+  color: inherit;
+  font-weight: 500;
 }

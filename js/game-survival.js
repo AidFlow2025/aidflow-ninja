@@ -7,12 +7,11 @@ const ctx = canvas.getContext("2d");
 let estado = "inicio"; // inicio | jugando | gameover
 let score = 0;
 let enemigos = [];
-let frame = 0;
 let loop = null;
-let tiempo = 0;
+let frame = 0;
 
 /* ======================
-   SPRITES
+   NINJA (SPRITE NO TOCAR)
 ====================== */
 const ninjaSprite = new Sprite(
   "assets/sprites/ninja_idle.png",
@@ -22,6 +21,16 @@ const ninjaSprite = new Sprite(
   6
 );
 
+const ninja = {
+  x: canvas.width / 2 - 16,
+  y: canvas.height - 48,
+  size: 32,
+  invulnerable: false
+};
+
+/* ======================
+   ENEMIGO (SPRITE NO TOCAR)
+====================== */
 const enemySprite = new Sprite(
   "assets/sprites/enemy_idle.png",
   32,
@@ -31,55 +40,59 @@ const enemySprite = new Sprite(
 );
 
 /* ======================
-   NINJA
-====================== */
-const ninja = {
-  x: canvas.width / 2 - 16,
-  y: canvas.height - 48,
-  size: 32,
-  vidas: 3,
-  invulnerable: false
-};
-
-/* ======================
-   PANTALLA INICIO
+   PANTALLAS
 ====================== */
 function pantallaInicio() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   ctx.fillStyle = "#020617";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = "#38bdf8";
-  ctx.font = "16px 'Press Start 2P', monospace";
+  ctx.fillStyle = "#e11d48";
+  ctx.font = "16px 'Press Start 2P'";
   ctx.textAlign = "center";
-
   ctx.fillText("NINJA SURVIVAL", canvas.width / 2, 140);
 
-  ctx.font = "10px 'Press Start 2P', monospace";
-  ctx.fillText("Mové el mouse para esquivar", canvas.width / 2, 190);
-  ctx.fillText("Sobreviví el mayor tiempo posible", canvas.width / 2, 210);
-  ctx.fillText("Click para comenzar", canvas.width / 2, 250);
+  ctx.fillStyle = "#e5e7eb";
+  ctx.font = "10px 'Press Start 2P'";
+  ctx.fillText("Mové el mouse para esquivar", canvas.width / 2, 200);
+  ctx.fillText("Sobreviví lo máximo posible", canvas.width / 2, 220);
+  ctx.fillText("CLICK PARA COMENZAR", canvas.width / 2, 260);
+}
+
+function pantallaGameOver() {
+  ctx.fillStyle = "rgba(2,6,23,0.9)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#ef4444";
+  ctx.font = "16px 'Press Start 2P'";
+  ctx.textAlign = "center";
+  ctx.fillText("GAME OVER", canvas.width / 2, 160);
+
+  ctx.fillStyle = "#e5e7eb";
+  ctx.font = "10px 'Press Start 2P'";
+  ctx.fillText(`PUNTAJE: ${score}`, canvas.width / 2, 210);
+  ctx.fillText("CLICK PARA REINTENTAR", canvas.width / 2, 250);
 }
 
 /* ======================
-   INICIAR JUEGO
+   INICIO
 ====================== */
 function iniciarJuego() {
   score = 0;
-  tiempo = 0;
+  frame = 0;
   enemigos = [];
   estado = "jugando";
 
+  ninja.x = canvas.width / 2 - ninja.size / 2;
+  ninja.y = canvas.height - 48;
+
+  ninja.invulnerable = true;
+  setTimeout(() => ninja.invulnerable = false, 1500);
+
   if (loop) clearInterval(loop);
   loop = setInterval(actualizarJuego, 1000 / 30);
-}
 
-canvas.addEventListener("click", () => {
-  if (estado === "inicio" || estado === "gameover") {
-    iniciarJuego();
-  }
-});
+  actualizarJuego();
+}
 
 /* ======================
    LOOP PRINCIPAL
@@ -97,79 +110,75 @@ function actualizarJuego() {
     return;
   }
 
-  // === JUGANDO ===
-  tiempo++;
   frame++;
-
-  // SCORE
   score++;
+
   document.getElementById("game-score").textContent =
     `Puntaje: ${score}`;
 
-  // RECOMPENSA
+  /* === SHURIKEN === */
   if (score % 10 === 0) {
     ganarShuriken(1);
-    textoFlotante("+1 🥷", ninja.x, ninja.y);
+    textoFlotante("+1 Shuriken", ninja.x, ninja.y);
   }
 
-  // DIFICULTAD PROGRESIVA
-  const spawnRate = Math.min(0.005 + tiempo / 20000, 0.05);
-  const velocidadBase = 1 + tiempo / 1200;
-
-  // NINJA
+  /* === NINJA === */
   ninjaSprite.draw(ctx, ninja.x, ninja.y, ninja.size);
 
-  // SPAWN ENEMIGOS
-  if (Math.random() < spawnRate) {
+  /* === DIFICULTAD PROGRESIVA === */
+  const dificultad = Math.min(0.015 + score * 0.00002, 0.08);
+  const velocidadBase = 2 + score * 0.002;
+
+  /* === SPAWN ENEMIGOS === */
+  if (Math.random() < dificultad) {
     enemigos.push({
       x: Math.random() * (canvas.width - 32),
       y: -32,
       size: 32,
-      speed: velocidadBase + Math.random()
+      speed: velocidadBase
     });
   }
 
-  // ENEMIGOS
+  /* === ENEMIGOS === */
   enemigos.forEach(e => {
     e.y += e.speed;
     enemySprite.draw(ctx, e.x, e.y, e.size);
 
-    if (colision(ninja, e)) {
+    if (!ninja.invulnerable && colision(ninja, e)) {
       terminarJuego();
     }
   });
 
-  // LIMPIEZA
   enemigos = enemigos.filter(e => e.y < canvas.height + 40);
 }
 
 /* ======================
    MOVIMIENTO
 ====================== */
-document.addEventListener("mousemove", e => {
+canvas.addEventListener("mousemove", e => {
   if (estado !== "jugando") return;
+
   const rect = canvas.getBoundingClientRect();
-  ninja.x = e.clientX - rect.left - ninja.size / 2;
+  const x = e.clientX - rect.left;
+
+  ninja.x = Math.max(
+    0,
+    Math.min(canvas.width - ninja.size, x - ninja.size / 2)
+  );
+});
+
+/* ======================
+   CLICK
+====================== */
+canvas.addEventListener("click", () => {
+  if (estado === "inicio" || estado === "gameover") {
+    iniciarJuego();
+  }
 });
 
 /* ======================
    GAME OVER
 ====================== */
-function pantallaGameOver() {
-  ctx.fillStyle = "rgba(2,6,23,0.85)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = "#ef4444";
-  ctx.font = "14px 'Press Start 2P', monospace";
-  ctx.textAlign = "center";
-  ctx.fillText("GAME OVER", canvas.width / 2, 160);
-
-  ctx.fillStyle = "#e5e7eb";
-  ctx.font = "10px 'Press Start 2P', monospace";
-  ctx.fillText(`Puntaje: ${score}`, canvas.width / 2, 200);
-  ctx.fillText("Click para reintentar", canvas.width / 2, 240);
-}
-
 function terminarJuego() {
   clearInterval(loop);
   estado = "gameover";
@@ -200,8 +209,7 @@ function textoFlotante(texto, x, y) {
   el.style.left = canvas.offsetLeft + x + "px";
   el.style.top = canvas.offsetTop + y + "px";
   el.style.color = "#facc15";
-  el.style.fontFamily = "'Press Start 2P', monospace";
-  el.style.fontSize = "10px";
+  el.style.fontWeight = "bold";
   el.style.pointerEvents = "none";
   el.style.animation = "floatUp 1s ease forwards";
   document.body.appendChild(el);

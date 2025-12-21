@@ -1,38 +1,41 @@
 /*************************
- * UI - USUARIO
+ * UI — USUARIO
  *************************/
 function renderUsuario() {
-  if (typeof usuario === "undefined") return;
+  if (!window.usuario) return;
 
-  const shuriken = document.getElementById("shuriken-usuario") 
-                || document.getElementById("shuriken-nivel1");
+  const shurikenEl =
+    document.getElementById("shuriken-usuario") ||
+    document.getElementById("shuriken-nivel1");
 
-  const saldo = document.getElementById("saldo-usuario");
-  const saldoRetenido = document.getElementById("saldo-retenido");
+  const saldoEl = document.getElementById("saldo-usuario");
+  const saldoRetenidoEl = document.getElementById("saldo-retenido");
 
-  if (shuriken) {
-    shuriken.textContent = `Shuriken disponibles: ${usuario.shuriken}`;
+  if (shurikenEl) {
+    shurikenEl.textContent = `Shuriken disponibles: ${usuario.shuriken}`;
   }
 
-  if (saldo) {
-    saldo.textContent = `Saldo retenido: $${usuario.saldo.toFixed(2)}`;
+  if (saldoEl) {
+    saldoEl.textContent = `$${usuario.saldo.toFixed(2)}`;
   }
 
-  if (saldoRetenido) {
-    saldoRetenido.textContent = `Saldo retenido: $${usuario.saldo.toFixed(2)}`;
+  if (saldoRetenidoEl) {
+    saldoRetenidoEl.textContent = `$${usuario.saldo.toFixed(2)}`;
   }
 }
 
 /*************************
- * UI - RETIROS
+ * UI — RETIROS
  *************************/
 function renderRetiros() {
+  if (!window.usuario) return;
+
   const btn = document.getElementById("btn-retiro");
   const bloqueo = document.getElementById("retiro-bloqueado");
-
   if (!btn) return;
 
-  const habilitado = usuario.tramoNivel1 >= 1 && usuario.saldo > 0;
+  const habilitado =
+    usuario.tramoNivel1 >= 1 && usuario.saldo > 0;
 
   btn.disabled = !habilitado;
 
@@ -42,29 +45,33 @@ function renderRetiros() {
 }
 
 /*************************
- * UI - TORNEOS
+ * UI — TORNEOS
  *************************/
 function renderTorneos() {
   const estado =
+    document.getElementById("torneos-status") ||
     document.getElementById("estado-torneos") ||
     document.getElementById("estado-torneo");
 
   const btn = document.getElementById("btn-torneo");
-
   if (!estado) return;
 
-  if (typeof torneosHabilitados === "function" && torneosHabilitados()) {
+  const activos =
+    typeof torneosHabilitados === "function" &&
+    torneosHabilitados();
+
+  if (activos) {
     estado.textContent = "🏆 Torneos activos — premios en dinero real";
     if (btn) btn.disabled = false;
   } else {
     estado.textContent =
-      "🔒 Torneos bloqueados hasta alcanzar 100 usuarios activos. Modo entrenamiento activo.";
+      "🔒 Torneos bloqueados hasta alcanzar 100 usuarios activos.";
     if (btn) btn.disabled = true;
   }
 }
 
 /*************************
- * UI - RANKING DUELOS
+ * UI — RANKING DUELOS
  *************************/
 function renderRankingDuelos() {
   const lista = document.getElementById("ranking-duelos");
@@ -88,7 +95,7 @@ function renderRankingDuelos() {
 }
 
 /*************************
- * UI - RANKING SURVIVAL
+ * UI — RANKING SURVIVAL
  *************************/
 function renderRankingSurvivalDashboard() {
   const ul = document.getElementById("ranking-survival-dashboard");
@@ -112,17 +119,21 @@ function renderRankingSurvivalDashboard() {
 }
 
 /*************************
- * UI - HISTORIAL
+ * UI — HISTORIAL
  *************************/
 function actualizarHistorialUI() {
-  const ciclos = document.getElementById("hist-ciclos");
-  if (!ciclos) return;
+  if (!window.usuario) return;
+
+  const ciclosEl = document.getElementById("hist-ciclos");
+  if (!ciclosEl) return;
+
+  ciclosEl.textContent = usuario.ciclosCompletados || 0;
 
   document.getElementById("hist-total").textContent =
     `$${usuario.totalGanado.toFixed(2)}`;
 
   document.getElementById("hist-shuriken").textContent =
-    usuario.shurikenGanados;
+    usuario.shurikenGanados || 0;
 
   document.getElementById("hist-fecha").textContent =
     usuario.ultimoCiclo
@@ -131,18 +142,60 @@ function actualizarHistorialUI() {
 }
 
 /*************************
+ * UI — PROGRESO ANIMADO
+ *************************/
+function animarProgresoNivel1(porcentajeObjetivo) {
+  const barra = document.getElementById("progreso-nivel1");
+  if (!barra) return;
+
+  let ancho = 0;
+  const intervalo = setInterval(() => {
+    ancho++;
+    barra.style.width = ancho + "%";
+
+    if (ancho >= porcentajeObjetivo) {
+      clearInterval(intervalo);
+    }
+  }, 10);
+}
+
+function actualizarUIProgresoAnimado() {
+  if (!window.usuario || !window.NIVELES) return;
+
+  const porcentaje =
+    (usuario.tramoNivel1 / NIVELES[1].tramos) * 100;
+
+  animarProgresoNivel1(Math.min(100, porcentaje));
+}
+
+/*************************
+ * UI — FEEDBACK SHURIKEN
+ *************************/
+function efectoShuriken(cantidad = 1) {
+  const contenedor = document.getElementById("shuriken-nivel1");
+  if (!contenedor) return;
+
+  contenedor.classList.add("pulse");
+  setTimeout(() => contenedor.classList.remove("pulse"), 400);
+
+  const flotante = document.createElement("span");
+  flotante.className = "shuriken-float";
+  flotante.textContent = `+${cantidad}`;
+  contenedor.appendChild(flotante);
+
+  setTimeout(() => flotante.remove(), 1000);
+}
+
+/*************************
  * EVENTOS GLOBALES
  *************************/
 window.addEventListener("shurikenUpdate", e => {
-  const shuriken = document.getElementById("shuriken-usuario");
-  if (shuriken) {
-    shuriken.textContent = `Shuriken disponibles: ${e.detail.total}`;
-  }
+  if (!e.detail) return;
+  const el = document.getElementById("shuriken-nivel1");
+  if (el) el.textContent = `Shuriken disponibles: ${e.detail.total}`;
 });
 
-window.addEventListener("rankingSurvivalUpdate", () => {
-  renderRankingSurvivalDashboard();
-});
+window.addEventListener("rankingSurvivalUpdate", renderRankingSurvivalDashboard);
 
 /*************************
  * INIT
@@ -151,59 +204,71 @@ document.addEventListener("DOMContentLoaded", () => {
   renderUsuario();
   renderRetiros();
   renderTorneos();
+  renderReferidos();
   renderRankingDuelos();
   renderRankingSurvivalDashboard();
+  actualizarHistorialUI();
+  actualizarUIProgresoAnimado();
 });
-/*************************
- * UI — ANIMACIONES
- *************************/
 
-function animarProgresoNivel1(porcentajeObjetivo) {
-  const barra = document.getElementById("progreso-nivel1");
-  if (!barra) return;
-
-  let anchoActual = 0;
-  const incremento = 1; // velocidad
-  const intervalo = setInterval(() => {
-    if (anchoActual >= porcentajeObjetivo) {
-      clearInterval(intervalo);
-      barra.style.width = porcentajeObjetivo + "%";
-    } else {
-      anchoActual += incremento;
-      barra.style.width = anchoActual + "%";
-    }
-  }, 10);
-}
 
 /*************************
- * ACTUALIZAR UI PROGRESO
- *************************/
-function actualizarUIProgresoAnimado() {
-  if (!window.usuario || !window.NIVELES) return;
-
-  const porcentaje =
-    (usuario.tramoNivel1 / NIVELES[1].tramos) * 100;
-
-  animarProgresoNivel1(porcentaje);
-}
-
-/*************************
- * SHURIKEN FEEDBACK
+ * REFERIDOS
  *************************/
 
-function efectoShuriken(cantidad = 1) {
-  const contenedor = document.getElementById("shuriken-nivel1");
-  if (!contenedor) return;
+function generarLinkReferido() {
+  if (!window.usuario) return;
 
-  // efecto pulse
-  contenedor.classList.add("pulse");
-  setTimeout(() => contenedor.classList.remove("pulse"), 400);
+  const baseURL = window.location.origin;
+  const link = `${baseURL}/register.html?ref=${usuario.id}`;
 
-  // texto flotante +X
-  const flotante = document.createElement("span");
-  flotante.textContent = `+${cantidad}`;
-  flotante.className = "shuriken-float";
-  contenedor.appendChild(flotante);
-
-  setTimeout(() => flotante.remove(), 1000);
+  const input = document.getElementById("link-referido");
+  if (input) input.value = link;
 }
+
+function copiarReferido() {
+  const input = document.getElementById("link-referido");
+  if (!input) return;
+
+  input.select();
+  document.execCommand("copy");
+
+  alert("🔗 Link de referido copiado");
+}
+
+function calcularBonusReferidos() {
+  const refs = usuario.referidos || 0;
+  const nivel = usuario.nivel || 1;
+
+  let bonus = 0;
+
+  if (nivel === 1) {
+    bonus = refs < 2 ? 40 : refs < 4 ? 45 : 50;
+  }
+
+  if (nivel === 2) {
+    bonus = refs < 2 ? 45 : refs < 4 ? 50 : 55;
+  }
+
+  if (nivel === 3) {
+    bonus = refs < 2 ? 50 : refs < 4 ? 55 : 60;
+  }
+
+  return bonus;
+}
+
+function renderReferidos() {
+  if (!window.usuario) return;
+
+  document.getElementById("total-referidos").textContent =
+    usuario.referidos || 0;
+
+  document.getElementById("ganancias-referidos").textContent =
+    `$${(usuario.gananciasReferidos || 0).toFixed(2)}`;
+
+  document.getElementById("bonus-referido").textContent =
+    `${calcularBonusReferidos()}%`;
+
+  generarLinkReferido();
+}
+

@@ -4,28 +4,30 @@
   <meta charset="UTF-8" />
   <title>AidFlow Ninja</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSS -->
   <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
 
+<!-- ================= HEADER ================= -->
 <header class="header">
-  <nav class="navbar">
-    <div class="nav-left">
-      <a href="index.html" class="logo-text">AidFlow Ninja</a>
-    </div>
+  <nav class="navbar container">
+    <a href="index.html" class="logo-text">AidFlow Ninja</a>
 
     <button class="menu-toggle" id="menuToggle">☰</button>
 
     <ul class="nav-links" id="navMenu">
-      <li><a href="como-funciona.html">Cómo Funciona</a></li>
-      <li><a href="dao.html">DAO</a></li>
-      <li><a href="faq.html">FAQs</a></li>
-      <li><a href="contacto.html">Contacto</a></li>
+      <li><a href="#que-es">Qué es</a></li>
+      <li><a href="#camino">El Camino</a></li>
+      <li><a href="#dao">DAO</a></li>
+      <li><a href="#contacto">Contacto</a></li>
     </ul>
   </nav>
 </header>
 
+<!-- ================= MAIN ================= -->
 <main class="container">
 
   <!-- HERO -->
@@ -33,80 +35,188 @@
     <h1>AidFlow Ninja</h1>
 
     <p class="hero-text">
-      Competí, jugá y progresá en una plataforma de ayuda mutua gamificada.
-      Los ninjas más activos acceden a beneficios reales.
+      No es un juego. No es una promesa vacía.<br>
+      Es una red de ayuda mutua donde solo progresan los que actúan.
     </p>
+  
 
     <div class="hero-actions">
-      <a href="dashboard/index.html" class="btn primary">
+     
+        <a href="dashboard/index.html" class="btn primary">
         🥷 Unirme como Ninja
       </a>
-
-      <a href="como-funciona.html" class="btn secondary">
+      
+      
+      <a href="#que-es" class="btn secondary">
         Cómo funciona
       </a>
     </div>
-  </section>
 
-  <!-- MINI JUEGO -->
-  <section class="card glow" id="mini-juego">
-   
-  <h2>🎮 Ninja Survival</h2>
+    <p class="terminos-home">
+  Al participar aceptás los
+  <a href="terminos.html" target="_blank">Términos y Condiciones</a>
+  de AidFlow Ninja.
+
+  
+  <label class="terminos-check">
+       <input type="checkbox" id="aceptaTerminos" required>
+           Acepto los
+           <a href="../terminos.html" target="_blank">
+            Términos y Condiciones
+           </a>
+       </label>
+
+
+</p>
+
+  </section>
 
   <canvas id="gameCanvas" width="320" height="420"></canvas>
 
-  <div id="game-ui">
-    <p id="game-score">Puntaje: 0</p>
 
-    <button class="btn primary" id="btn-start">
-      Jugar
-    </button>
+  <!-- ================= QUÉ ES ================= -->
+  <section class="section" id="que-es">
+    <h2>¿Qué es AidFlow Ninja?</h2>
 
-    <p class="muted">
-      🥷 Cada 10 puntos ganás 1 Shuriken (máx. 3 por día)
+    <p>
+      AidFlow Ninja es una comunidad organizada como un clan.
+      Cada miembro entra con un objetivo claro: avanzar por mérito propio
+      mientras fortalece al sistema completo.
     </p>
-  </div>
-</section>
 
-<section class="card">
-  <h3>🏆 Top 10 Ninja Survival</h3>
-  <ol id="ranking-juego"></ol>
-</section>
-
-
-    <p style="font-size:0.85rem; opacity:.7;">
-      🥷 Cada 10 puntos ganás 1 Shuriken
+    <p>
+      No hay atajos.  
+      No hay promesas mágicas.  
+      Solo reglas claras, progreso medible y recompensas reales.
     </p>
   </section>
 
-  <!-- RANKING JUEGO -->
-  <section class="card">
-    <h3>🏆 Top 10 Ninja Survival</h3>
-    <ol id="ranking-juego"></ol>
-  </section>
+  <!-- ================= AYUDA MUTUA ================= -->
+  <section class="section">
+    <h2>Ayuda mutua, sin cuentos</h2>
 
-  <!-- FEATURES -->
-  <section class="features">
-    <h2>¿Por qué AidFlow Ninja?</h2>
+    <p>
+      En AidFlow Ninja, la ayuda mutua no es caridad ni marketing.
+      Es una mecánica estructurada.
+    </p>
 
-    <ul class="features-list">
-      <li>✔ Ayuda mutua transparente</li>
-      <li>✔ Juegos y desafíos reales</li>
-      <li>✔ DAO comunitario</li>
-      <li>✔ Recompensas progresivas</li>
+    <ul class="list">
+      <li>Participar</li>
+      <li>Competir</li>
+      <li>Mantenerse activo</li>
     </ul>
+
+    <p>
+      El sistema redistribuye beneficios entre quienes sostienen el clan en movimiento.
+    </p>
+  </section>
+
+  <!-- ================= CAMINO ================= -->
+  <section class="section" id="camino">
+    <h2>El camino del Ninja</h2>
+
+    <ul class="list">
+      <li>Empezás como aprendiz</li>
+      <li>Completás ciclos</li>
+      <li>Ganás Shuriken</li>
+      <li>Desbloqueás niveles</li>
+      <li>Accedés a desafíos mayores</li>
+    </ul>
+
+    <p>
+      Los ninjas constantes avanzan.  
+      Los inactivos quedan atrás.
+    </p>
+  </section>
+
+  <!-- ================= SHURIKEN ================= -->
+  <section class="section">
+    <h2>Shuriken: la moneda del clan</h2>
+
+    <p>
+      Los Shuriken representan tu actividad real.
+    </p>
+
+    <p>
+      No se compran.  
+      No se regalan.  
+      Se ganan.
+    </p>
+  </section>
+
+  <!-- ================= JUEGOS ================= -->
+  <section class="section">
+    <h2>Entrenamiento y combate</h2>
+
+    <p>
+      Los juegos no son decorativos.
+      Son pruebas.
+    </p>
+
+    <p>
+      Cada partida es una oportunidad de demostrar reflejos,
+      constancia y enfoque.
+    </p>
+  </section>
+
+  <!-- ================= TORNEOS ================= -->
+  <section class="section">
+    <h2>Torneos del clan</h2>
+
+    <p>
+      Cuando el clan alcanza la masa crítica,
+      se habilitan los torneos.
+    </p>
+
+    <p>
+      No todos ganan.  
+      Solo los mejores.
+    </p>
+  </section>
+
+  <!-- ================= DAO ================= -->
+  <section class="section" id="dao">
+    <h2>La DAO: el consejo del clan</h2>
+
+    <p>
+      AidFlow Ninja funciona bajo una estructura DAO.
+    </p>
+
+    <p>
+      El fondo común sostiene el sistema,
+      paga recompensas
+      y garantiza continuidad.
+    </p>
+  </section>
+
+  <!-- ================= PARA QUIÉN ================= -->
+  <section class="section">
+    <h2>Esto es para vos si…</h2>
+
+    <ul class="list">
+      <li>Valorás reglas claras</li>
+      <li>Creés en el mérito</li>
+      <li>Podés sostener constancia</li>
+    </ul>
+
+    <p>
+      Si buscás resultados sin esfuerzo, este no es tu lugar.
+    </p>
   </section>
 
 </main>
 
-<footer class="footer">
-  <p>© 2025 AidFlow Ninja — Comunidad descentralizada</p>
+<!-- ================= FOOTER ================= -->
+<footer class="footer" id="contacto">
+  <p>© 2025 AidFlow Ninja</p>
+  <p>Ayuda mutua · Mérito · Transparencia</p>
 </footer>
 
-<!-- SCRIPTS -->
+<!-- JS -->
 <script src="js/economia.js"></script>
 <script src="js/game-survival.js"></script>
 <script src="js/main.js"></script>
+
 
 </body>
 </html>

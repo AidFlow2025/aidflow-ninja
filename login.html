@@ -3,19 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>Login – AidFlow Ninja</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/main.css">
 </head>
+
 <body>
 
-<main class="container">
+<main class="container admin-login">
+
   <h1>🥷 Acceso Ninja</h1>
 
-  <input type="text" id="user" placeholder="Usuario">
+  <input type="text" id="user" placeholder="Usuario Ninja">
   <input type="password" id="pass" placeholder="Contraseña">
 
-  <button onclick="login()">Entrar</button>
+  <button class="btn primary" onclick="login()">
+    Entrar
+  </button>
 
-  <p id="login-error"></p>
+  <p id="login-error" style="color:#ef4444; margin-top:10px;"></p>
+
+  <p style="margin-top:20px; opacity:.7;">
+    ¿Todavía no sos Ninja?
+    <a href="register.html">Crear cuenta</a>
+  </p>
+
 </main>
 
 <script src="js/auth.js"></script>

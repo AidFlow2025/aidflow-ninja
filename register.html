@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro Ninja</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+
+<main class="container admin-login">
+
+  <h1>🥷 Crear cuenta Ninja</h1>
+
+  <input type="text" id="username" placeholder="Nombre Ninja">
+
+  <label class="terminos-check">
+    <input type="checkbox" id="aceptaTerminos">
+    Acepto los
+    <a href="terminos.html" target="_blank">
+      Términos y Condiciones
+    </a>
+  </label>
+
+  <button class="btn primary" onclick="registrarUsuario()">
+    Crear cuenta
+  </button>
+
+  <p style="margin-top:20px; opacity:.7;">
+    ¿Ya tenés cuenta? <a href="login.html">Iniciar sesión</a>
+  </p>
+
+</main>
+
+<script src="js/auth.js"></script>
+</body>
+</html>

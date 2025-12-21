@@ -59,3 +59,32 @@ function logout() {
   localStorage.clear();
   window.location.href = "/index.html";
 }
+
+function registrarUsuario() {
+  const acepta = document.getElementById("aceptaTerminos")?.checked;
+  const nombre = document.getElementById("username")?.value;
+
+  if (!nombre) {
+    alert("⚠️ Ingresá un nombre ninja");
+    return;
+  }
+
+  if (!acepta) {
+    alert("⚠️ Debés aceptar los Términos y Condiciones");
+    return;
+  }
+
+  const usuario = {
+    id: "ninja_" + Date.now(),
+    nombre,
+    registrado: true,
+    aceptaTerminos: true,
+    pagoConfirmado: false,
+    nivel: 0
+  };
+
+  localStorage.setItem("aidflow_usuario", JSON.stringify(usuario));
+
+  // 👉 va a activar pase
+  window.location.href = "pago.html";
+}
