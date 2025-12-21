@@ -1,85 +1,217 @@
 const canvas = document.getElementById("gameCanvas");
-if (!canvas) return;
-
 const ctx = canvas.getContext("2d");
 
-let jugando = false;
+/* ======================
+   ESTADO DEL JUEGO
+====================== */
+let estado = "inicio"; // inicio | jugando | gameover
 let score = 0;
-let loop;
-let ninja = { x: 140, y: 360, size: 22 };
 let enemigos = [];
+let frame = 0;
+let loop = null;
+let tiempo = 0;
 
-/* INICIAR */
+/* ======================
+   SPRITES
+====================== */
+const ninjaSprite = new Sprite(
+  "assets/sprites/ninja_idle.png",
+  32,
+  32,
+  6,
+  6
+);
+
+const enemySprite = new Sprite(
+  "assets/sprites/enemy_idle.png",
+  32,
+  32,
+  4,
+  10
+);
+
+/* ======================
+   NINJA
+====================== */
+const ninja = {
+  x: canvas.width / 2 - 16,
+  y: canvas.height - 48,
+  size: 32,
+  vidas: 3,
+  invulnerable: false
+};
+
+/* ======================
+   PANTALLA INICIO
+====================== */
+function pantallaInicio() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#020617";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#38bdf8";
+  ctx.font = "16px 'Press Start 2P', monospace";
+  ctx.textAlign = "center";
+
+  ctx.fillText("NINJA SURVIVAL", canvas.width / 2, 140);
+
+  ctx.font = "10px 'Press Start 2P', monospace";
+  ctx.fillText("Mové el mouse para esquivar", canvas.width / 2, 190);
+  ctx.fillText("Sobreviví el mayor tiempo posible", canvas.width / 2, 210);
+  ctx.fillText("Click para comenzar", canvas.width / 2, 250);
+}
+
+/* ======================
+   INICIAR JUEGO
+====================== */
 function iniciarJuego() {
   score = 0;
+  tiempo = 0;
   enemigos = [];
-  jugando = true;
+  estado = "jugando";
 
-  clearInterval(loop);
+  if (loop) clearInterval(loop);
   loop = setInterval(actualizarJuego, 1000 / 30);
 }
 
-/* LOOP */
+canvas.addEventListener("click", () => {
+  if (estado === "inicio" || estado === "gameover") {
+    iniciarJuego();
+  }
+});
+
+/* ======================
+   LOOP PRINCIPAL
+====================== */
 function actualizarJuego() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Puntaje
+  if (estado === "inicio") {
+    pantallaInicio();
+    return;
+  }
+
+  if (estado === "gameover") {
+    pantallaGameOver();
+    return;
+  }
+
+  // === JUGANDO ===
+  tiempo++;
+  frame++;
+
+  // SCORE
   score++;
   document.getElementById("game-score").textContent =
     `Puntaje: ${score}`;
 
-  // Premio shuriken
+  // RECOMPENSA
   if (score % 10 === 0) {
     ganarShuriken(1);
+    textoFlotante("+1 🥷", ninja.x, ninja.y);
   }
 
-  // Ninja
-  ctx.fillStyle = "#38bdf8";
-  ctx.fillRect(ninja.x, ninja.y, ninja.size, ninja.size);
+  // DIFICULTAD PROGRESIVA
+  const spawnRate = Math.min(0.005 + tiempo / 20000, 0.05);
+  const velocidadBase = 1 + tiempo / 1200;
 
-  // Enemigos
-  if (Math.random() < 0.04) {
+  // NINJA
+  ninjaSprite.draw(ctx, ninja.x, ninja.y, ninja.size);
+
+  // SPAWN ENEMIGOS
+  if (Math.random() < spawnRate) {
     enemigos.push({
-      x: Math.random() * (canvas.width - 20),
-      y: -20,
-      size: 20
+      x: Math.random() * (canvas.width - 32),
+      y: -32,
+      size: 32,
+      speed: velocidadBase + Math.random()
     });
   }
 
+  // ENEMIGOS
   enemigos.forEach(e => {
-    e.y += 4;
-    ctx.fillStyle = "#ef4444";
-    ctx.fillRect(e.x, e.y, e.size, e.size);
+    e.y += e.speed;
+    enemySprite.draw(ctx, e.x, e.y, e.size);
 
-    if (
-      e.x < ninja.x + ninja.size &&
-      e.x + e.size > ninja.x &&
-      e.y < ninja.y + ninja.size &&
-      e.y + e.size > ninja.y
-    ) {
+    if (colision(ninja, e)) {
       terminarJuego();
     }
   });
+
+  // LIMPIEZA
+  enemigos = enemigos.filter(e => e.y < canvas.height + 40);
 }
 
-/* MOVIMIENTO */
+/* ======================
+   MOVIMIENTO
+====================== */
 document.addEventListener("mousemove", e => {
+  if (estado !== "jugando") return;
   const rect = canvas.getBoundingClientRect();
   ninja.x = e.clientX - rect.left - ninja.size / 2;
 });
 
-/* GAME OVER */
+/* ======================
+   GAME OVER
+====================== */
+function pantallaGameOver() {
+  ctx.fillStyle = "rgba(2,6,23,0.85)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#ef4444";
+  ctx.font = "14px 'Press Start 2P', monospace";
+  ctx.textAlign = "center";
+  ctx.fillText("GAME OVER", canvas.width / 2, 160);
+
+  ctx.fillStyle = "#e5e7eb";
+  ctx.font = "10px 'Press Start 2P', monospace";
+  ctx.fillText(`Puntaje: ${score}`, canvas.width / 2, 200);
+  ctx.fillText("Click para reintentar", canvas.width / 2, 240);
+}
+
 function terminarJuego() {
   clearInterval(loop);
-  jugando = false;
+  estado = "gameover";
 
   guardarPuntaje(score);
   cargarRankingJuego();
-
-  alert(`💀 Game Over\nPuntaje: ${score}`);
 }
 
-/* RANKING */
+/* ======================
+   COLISIÓN
+====================== */
+function colision(a, b) {
+  return (
+    a.x < b.x + b.size &&
+    a.x + a.size > b.x &&
+    a.y < b.y + b.size &&
+    a.y + a.size > b.y
+  );
+}
+
+/* ======================
+   TEXTO FLOTANTE
+====================== */
+function textoFlotante(texto, x, y) {
+  const el = document.createElement("div");
+  el.textContent = texto;
+  el.style.position = "absolute";
+  el.style.left = canvas.offsetLeft + x + "px";
+  el.style.top = canvas.offsetTop + y + "px";
+  el.style.color = "#facc15";
+  el.style.fontFamily = "'Press Start 2P', monospace";
+  el.style.fontSize = "10px";
+  el.style.pointerEvents = "none";
+  el.style.animation = "floatUp 1s ease forwards";
+  document.body.appendChild(el);
+
+  setTimeout(() => el.remove(), 1000);
+}
+
+/* ======================
+   RANKING
+====================== */
 function guardarPuntaje(puntos) {
   let ranking =
     JSON.parse(localStorage.getItem("aidflow_ranking_juego")) || [];

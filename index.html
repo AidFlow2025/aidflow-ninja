@@ -50,15 +50,29 @@
 
   <!-- MINI JUEGO -->
   <section class="card glow" id="mini-juego">
-    <h2>🎮 Ninja Survival</h2>
+   
+  <h2>🎮 Ninja Survival</h2>
 
-    <canvas id="gameCanvas" width="320" height="420"></canvas>
+  <canvas id="gameCanvas" width="320" height="420"></canvas>
 
+  <div id="game-ui">
     <p id="game-score">Puntaje: 0</p>
 
-    <button class="btn primary" onclick="iniciarJuego()">
+    <button class="btn primary" id="btn-start">
       Jugar
     </button>
+
+    <p class="muted">
+      🥷 Cada 10 puntos ganás 1 Shuriken (máx. 3 por día)
+    </p>
+  </div>
+</section>
+
+<section class="card">
+  <h3>🏆 Top 10 Ninja Survival</h3>
+  <ol id="ranking-juego"></ol>
+</section>
+
 
     <p style="font-size:0.85rem; opacity:.7;">
       🥷 Cada 10 puntos ganás 1 Shuriken
