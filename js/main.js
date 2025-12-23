@@ -39,9 +39,9 @@ function init() {
 
 init();
 
-function init() {
-  renderLeaderboard();
-}
+//function init() {
+//  renderLeaderboard();
+//}
 
 /*************************
  * LOGIN SIMULADO
