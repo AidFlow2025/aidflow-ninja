@@ -179,6 +179,24 @@ function copiarReferido() {
   document.execCommand("copy");
   alert("Link copiado 🥷");
 }
+<!-- ======================
+     DUELOS NINJA
+====================== -->
+<section class="card" id="seccion-duelos">
+  <h2>⚔️ Duelos Ninja</h2>
+
+  <p id="duelo-status" class="muted">
+    Verificando requisitos...
+  </p>
+
+  <button
+    class="btn primary"
+    id="btn-duelo"
+    style="display:none;"
+    onclick="entrarDuelo()">
+    ⚔️ Entrar a un Duelo ($0.25)
+  </button>
+</section>
 
 function cargarDashboard() {
   const user = localStorage.getItem("aidflow_user");

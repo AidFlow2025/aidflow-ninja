@@ -452,5 +452,28 @@ function cargarJuegosUsuario() {
 
   seccion.style.display = "block";
 }
+function cargarDuelosUsuario() {
+  const user = localStorage.getItem("aidflow_user");
+  if (!user) return;
+
+  const refs =
+    Number(localStorage.getItem("aidflow_refs_" + user)) || 0;
+
+  const status = document.getElementById("duelo-status");
+  const btn = document.getElementById("btn-duelo");
+
+  if (refs < 2) {
+    status.textContent =
+      `🔒 Necesitás 2 referidos para desbloquear Duelos (tenés ${refs})`;
+    btn.style.display = "none";
+    return;
+  }
+
+  status.textContent =
+    "🔥 Duelos desbloqueados — Apuesta $0.25";
+  btn.style.display = "inline-block";
+}
+
+document.addEventListener("DOMContentLoaded", cargarDuelosUsuario);
 
 document.addEventListener("DOMContentLoaded", cargarJuegosUsuario);
