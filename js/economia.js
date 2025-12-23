@@ -322,3 +322,54 @@ document.addEventListener("DOMContentLoaded", () => {
     desbloquearNivel2();
   }
 });
+
+
+function procesarReferido(monto = 10) {
+  const referidoPor = localStorage.getItem("aidflow_ref_origen");
+  if (!referidoPor) return;
+
+  if (referidoPor === usuario.id) return; // anti auto-ref
+
+  const nivel = usuario.nivel || 1;
+
+  const refKey = "aidflow_refs_" + referidoPor;
+  let refData = JSON.parse(localStorage.getItem(refKey)) || {
+    total: 0,
+    ganancias: 0
+  };
+
+  refData.total++;
+
+  let porcentaje = REFERIDOS_CONFIG[nivel].base;
+
+  if (refData.total >= 4) porcentaje = REFERIDOS_CONFIG[nivel].bonus[2];
+  else if (refData.total >= 2) porcentaje = REFERIDOS_CONFIG[nivel].bonus[1];
+
+  const ganancia = monto * porcentaje;
+
+  refData.ganancias += ganancia;
+
+  // Guardar referidos
+  localStorage.setItem(refKey, JSON.stringify(refData));
+
+  // Sumar saldo al referente
+  let refUser =
+    JSON.parse(localStorage.getItem("aidflow_user_" + referidoPor)) || null;
+
+  if (refUser) {
+    refUser.saldo += ganancia;
+    localStorage.setItem(
+      "aidflow_user_" + referidoPor,
+      JSON.stringify(refUser)
+    );
+  }
+
+  // DAO
+  DAO.fondo += monto * 0.10;
+  guardarDAO();
+
+  // Limpiar origen
+  localStorage.removeItem("aidflow_ref_origen");
+
+  console.log("🧲 Referido procesado:", referidoPor);
+}

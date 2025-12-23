@@ -1,40 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin — AidFlow Ninja</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body>
+
+<!-- PROTECCIÓN -->
 <script>
   if (localStorage.getItem("aidflow_admin_auth") !== "true") {
     window.location.href = "index.html";
   }
 </script>
 
-<h1>Panel Admin — AidFlow Ninja</h1>
+<header class="admin-header">
+  <div>
+    <h1>🛠️ Panel Administrador</h1>
+    <p class="muted">Control central del Dojo</p>
+  </div>
 
-<section>
-  <h2>DAO</h2>
-  <input type="number" id="dao-fondo" />
-  <button onclick="guardarDAOAdmin()">Guardar DAO</button>
-</section>
+  <button class="btn secondary" onclick="logoutAdmin()">Salir</button>
+</header>
 
-<section>
-  <h2>Torneos</h2>
+<main class="container admin-container">
 
-  <label>Pozo total ($)</label>
-  <input type="number" id="torneo-pozo" />
+  <!-- ======================
+       DAO
+  ======================= -->
+  <section class="card">
+    <h2>💰 Fondo DAO</h2>
 
-  <label>Cantidad de ganadores</label>
-  <input type="number" id="torneo-ganadores" />
+    <label>
+      Monto actual ($)
+      <input type="number" id="dao-fondo">
+    </label>
 
-  <button onclick="guardarTorneoAdmin()">Guardar Torneo</button>
-</section>
+    <button class="btn primary" onclick="guardarDAOAdmin()">
+      Guardar DAO
+    </button>
+  </section>
 
-<section>
-  <h2>Sistema</h2>
+  <!-- ======================
+       SISTEMA
+  ======================= -->
+  <section class="card">
+    <h2>⚙️ Sistema</h2>
 
-  <label>Usuarios activos</label>
-  <input type="number" id="usuarios-activos" />
+    <label>
+      Usuarios activos
+      <input type="number" id="usuarios-activos">
+    </label>
 
-  <button onclick="guardarSistemaAdmin()">Guardar Sistema</button>
-</section>
+    <label class="check">
+      <input type="checkbox" id="activar-juegos">
+      Juegos habilitados
+    </label>
 
-<button onclick="logoutAdmin()">Salir</button>
+    <label class="check">
+      <input type="checkbox" id="activar-torneos">
+      Torneos habilitados
+    </label>
 
+    <button class="btn primary" onclick="guardarSistema()">
+      Guardar sistema
+    </button>
+  </section>
+
+  <!-- ======================
+       JUEGOS
+  ======================= -->
+  <section class="card">
+    <h2>🎮 Juegos (Embed)</h2>
+
+    <label>
+      Nombre del juego
+      <input type="text" id="juego-nombre">
+    </label>
+
+    <label>
+      URL / Embed
+      <input type="text" id="juego-url">
+    </label>
+
+    <button class="btn primary" onclick="agregarJuego()">
+      Agregar juego
+    </button>
+
+    <ul id="lista-juegos"></ul>
+  </section>
+
+  <!-- ======================
+       TORNEOS
+  ======================= -->
+  <section class="card">
+    <h2>🏆 Torneos</h2>
+
+    <label>
+      Juego
+      <input type="text" id="torneo-juego">
+    </label>
+
+    <label>
+      Pozo total ($)
+      <input type="number" id="torneo-pozo">
+    </label>
+
+    <label>
+      Cantidad de ganadores
+      <input type="number" id="torneo-ganadores">
+    </label>
+
+    <button class="btn primary" onclick="crearTorneo()">
+      Crear torneo
+    </button>
+  </section>
+
+  <!-- ======================
+       REFERIDOS
+  ======================= -->
+  <section class="card">
+    <h2>🧲 Top Referidos</h2>
+    <ul id="admin-referidos"></ul>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>© 2025 AidFlow Ninja — Admin</p>
+</footer>
 
 <script src="../js/admin.js"></script>
-
+<script src="../js/system.js"></script>
+</body>
+</html>

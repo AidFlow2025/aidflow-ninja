@@ -272,3 +272,185 @@ function renderReferidos() {
   generarLinkReferido();
 }
 
+function cargarReferidosUsuario() {
+  const user = localStorage.getItem("aidflow_user");
+  if (!user) return;
+
+  const refKey = "aidflow_refs_" + user;
+  const data = JSON.parse(localStorage.getItem(refKey)) || {
+    total: 0,
+    ganancias: 0
+  };
+
+  const countEl = document.getElementById("ref-count");
+  const gananciasEl = document.getElementById("ref-ganancias");
+  const linkEl = document.getElementById("ref-link");
+
+  if (countEl) countEl.textContent = data.total;
+  if (gananciasEl)
+    gananciasEl.textContent = "$" + data.ganancias.toFixed(2);
+
+  if (linkEl) {
+    linkEl.value =
+      window.location.origin +
+      "/login.html?ref=" +
+      encodeURIComponent(user);
+  }
+}
+
+function copiarReferido() {
+  const input = document.getElementById("ref-link");
+  input.select();
+  document.execCommand("copy");
+  alert("🔗 Enlace de referido copiado");
+}
+
+document.addEventListener(
+  "DOMContentLoaded",
+  cargarReferidosUsuario
+);
+
+
+function cargarReferidosUsuario() {
+  const key = "aidflow_refs_" + usuario.id;
+  const data = JSON.parse(localStorage.getItem(key)) || {
+    total: 0,
+    ganancias: 0
+  };
+
+  const totalEl = document.getElementById("ref-total");
+  const gananciaEl = document.getElementById("ref-ganancia");
+  const linkEl = document.getElementById("ref-link");
+
+  if (totalEl) totalEl.textContent = data.total;
+  if (gananciaEl)
+    gananciaEl.textContent = "$" + data.ganancias.toFixed(2);
+
+  if (linkEl) {
+    linkEl.value =
+      `${location.origin}/login.html?ref=${usuario.id}`;
+  }
+}
+
+function copiarRef() {
+  const input = document.getElementById("ref-link");
+  input.select();
+  document.execCommand("copy");
+  alert("🔗 Enlace copiado");
+}
+
+
+function cargarTorneoUsuario() {
+  const estado = Number(localStorage.getItem("aidflow_usuarios_activos")) || 0;
+  const minUsuarios =
+    Number(localStorage.getItem("aidflow_torneo_min_users")) || 100;
+
+  const pozo =
+    Number(localStorage.getItem("aidflow_torneo_pozo")) || 0;
+
+  const ganadores =
+    Number(localStorage.getItem("aidflow_torneo_ganadores")) || 0;
+
+  const estadoTxt = document.getElementById("torneo-estado");
+  const info = document.getElementById("torneo-info");
+  const btn = document.getElementById("btn-torneo-entrar");
+
+  if (!estadoTxt) return;
+
+  if (estado < minUsuarios) {
+    estadoTxt.textContent =
+      `🔒 Torneo bloqueado — faltan ${minUsuarios - estado} ninjas`;
+    info.style.display = "none";
+    btn.style.display = "none";
+    return;
+  }
+
+  estadoTxt.textContent = "🔥 Torneo activo";
+  info.style.display = "block";
+  btn.style.display = "inline-block";
+
+  document.getElementById("torneo-pozo-view").textContent =
+    `$${pozo.toFixed(2)}`;
+
+  document.getElementById("torneo-ganadores-view").textContent =
+    ganadores;
+}
+
+function entrarTorneo() {
+  alert("⚔️ Modo Torneo próximamente");
+  // futuro: redirigir a juego torneo
+}
+
+
+function cargarDuelosUsuario() {
+  const user = localStorage.getItem("aidflow_user");
+  if (!user) return;
+
+  const refs =
+    Number(localStorage.getItem("aidflow_refs_" + user)) || 0;
+
+  const status = document.getElementById("duelo-status");
+  const btn = document.getElementById("btn-duelo");
+
+  if (refs < 2) {
+    status.textContent =
+      `🔒 Necesitás 2 referidos para desbloquear Duelos (tenés ${refs})`;
+    btn.style.display = "none";
+    return;
+  }
+
+  status.textContent =
+    "🔥 Duelos desbloqueados — Apuesta $0.25";
+  btn.style.display = "inline-block";
+}
+
+document.addEventListener("DOMContentLoaded", cargarDuelosUsuario);
+
+document.addEventListener("DOMContentLoaded", cargarTorneoUsuario);
+
+document.addEventListener("DOMContentLoaded", () => {
+  cargarReferidosUsuario();
+});
+function cargarJuegosUsuario() {
+  const juegosActivos =
+    localStorage.getItem("aidflow_juegos_activos") === "true";
+
+  const seccion = document.getElementById("seccion-juegos");
+  if (!seccion || !juegosActivos) return;
+
+  const juegos =
+    JSON.parse(localStorage.getItem("aidflow_games")) || [];
+
+  const contenedor = document.getElementById("juegos-embed");
+  contenedor.innerHTML = "";
+
+  const activos = juegos.filter(j => j.activo);
+
+  if (activos.length === 0) {
+    contenedor.innerHTML =
+      "<p class='muted'>No hay juegos disponibles</p>";
+    seccion.style.display = "block";
+    return;
+  }
+
+  activos.forEach(j => {
+    const card = document.createElement("div");
+    card.className = "game-card";
+
+    card.innerHTML = `
+      <h3>${j.nombre}</h3>
+      <iframe
+        src="${j.url}"
+        loading="lazy"
+        frameborder="0"
+        allowfullscreen>
+      </iframe>
+    `;
+
+    contenedor.appendChild(card);
+  });
+
+  seccion.style.display = "block";
+}
+
+document.addEventListener("DOMContentLoaded", cargarJuegosUsuario);

@@ -208,3 +208,180 @@ function guardarSistemaAdmin() {
 }
 
 document.addEventListener("DOMContentLoaded", cargarAdmin);
+  
+
+function cargarTopReferidosAdmin() {
+  const lista = document.getElementById("admin-referidos");
+  if (!lista) return;
+
+  lista.innerHTML = "";
+
+  const keys = Object.keys(localStorage)
+    .filter(k => k.startsWith("aidflow_refs_"));
+
+  const referidos = keys.map(k => {
+    const id = k.replace("aidflow_refs_", "");
+    const data = JSON.parse(localStorage.getItem(k));
+    return {
+      id,
+      total: data.total || 0,
+      ganancias: data.ganancias || 0
+    };
+  });
+
+  referidos.sort((a, b) => b.total - a.total);
+
+  referidos.slice(0, 10).forEach(r => {
+    const li = document.createElement("li");
+    li.textContent =
+      `${r.id} — ${r.total} referidos — $${r.ganancias.toFixed(2)}`;
+    lista.appendChild(li);
+  });
+}
+
+
+/* ========= LOGOUT ========= */
+function logoutAdmin() {
+  localStorage.removeItem("aidflow_admin_auth");
+  window.location.href = "index.html";
+}
+
+/* ========= DAO ========= */
+function guardarDAOAdmin() {
+  const dao = document.getElementById("dao-fondo").value;
+  localStorage.setItem("aidflow_dao", dao);
+  alert("DAO actualizado");
+}
+
+/* ========= TORNEOS ========= */
+function guardarTorneoAdmin() {
+  localStorage.setItem(
+    "aidflow_torneo",
+    JSON.stringify({
+      pozo: document.getElementById("torneo-pozo").value,
+      ganadores: document.getElementById("torneo-ganadores").value
+    })
+  );
+  alert("Torneo guardado");
+}
+
+/* ========= SISTEMA ========= */
+function guardarSistemaAdmin() {
+  localStorage.setItem(
+    "aidflow_usuarios_activos",
+    document.getElementById("usuarios-activos").value
+  );
+  alert("Sistema actualizado");
+}
+
+/* ========= JUEGOS ========= */
+function agregarJuego() {
+  const url = document.getElementById("juego-url").value;
+  if (!url) return;
+
+  const juegos =
+    JSON.parse(localStorage.getItem("aidflow_juegos")) || [];
+
+  juegos.push(url);
+
+  localStorage.setItem(
+    "aidflow_juegos",
+    JSON.stringify(juegos)
+  );
+
+  renderJuegos();
+}
+
+function renderJuegos() {
+  const ul = document.getElementById("lista-juegos");
+  ul.innerHTML = "";
+
+  const juegos =
+    JSON.parse(localStorage.getItem("aidflow_juegos")) || [];
+
+  juegos.forEach((url, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${url}
+      <button onclick="eliminarJuego(${i})">❌</button>
+    `;
+    ul.appendChild(li);
+  });
+}
+
+function eliminarJuego(i) {
+  const juegos =
+    JSON.parse(localStorage.getItem("aidflow_juegos")) || [];
+
+  juegos.splice(i, 1);
+
+  localStorage.setItem(
+    "aidflow_juegos",
+    JSON.stringify(juegos)
+  );
+
+  renderJuegos();
+}
+
+/* ========= REFERIDOS ========= */
+function cargarReferidosAdmin() {
+  const ul = document.getElementById("admin-referidos");
+  if (!ul) return;
+
+  ul.innerHTML = "";
+
+  Object.keys(localStorage)
+    .filter(k => k.startsWith("aidflow_refs_"))
+    .forEach(k => {
+      const user = k.replace("aidflow_refs_", "");
+      const total = localStorage.getItem(k);
+
+      const li = document.createElement("li");
+      li.textContent = `${user}: ${total}`;
+      ul.appendChild(li);
+    });
+}
+
+/* ========= INIT ========= */
+window.onload = () => {
+  renderJuegos();
+  cargarReferidosAdmin();
+
+  document.getElementById("dao-fondo").value =
+    localStorage.getItem("aidflow_dao") || 0;
+};
+
+
+function cargarReferidosAdmin() {
+  const lista = document.getElementById("admin-referidos");
+  if (!lista) return;
+
+  lista.innerHTML = "";
+
+  const datos = Object.keys(localStorage)
+    .filter(k => k.startsWith("aidflow_refs_"))
+    .map(k => ({
+      user: k.replace("aidflow_refs_", ""),
+      refs: Number(localStorage.getItem(k)) || 0
+    }))
+    .sort((a, b) => b.refs - a.refs);
+
+  if (datos.length === 0) {
+    lista.innerHTML = "<li>Sin referidos aún</li>";
+    return;
+  }
+
+  datos.forEach(d => {
+    const li = document.createElement("li");
+    li.textContent = `🥷 ${d.user} — ${d.refs} referidos`;
+    lista.appendChild(li);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  cargarReferidosAdmin();
+
+  const dao = localStorage.getItem("aidflow_dao") || 0;
+  const inputDAO = document.getElementById("dao-fondo");
+  if (inputDAO) inputDAO.value = dao;
+});

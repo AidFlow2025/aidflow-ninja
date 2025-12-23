@@ -2,37 +2,128 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Registro Ninja</title>
+  <title>Registro Ninja — AidFlow Ninja</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
 
-<main class="container admin-login">
+<main class="container">
+  <h1>🥷 Registro Ninja</h1>
 
-  <h1>🥷 Crear cuenta Ninja</h1>
-
-  <input type="text" id="username" placeholder="Nombre Ninja">
+  <input id="user" placeholder="Usuario ninja">
+  <input id="pass" type="password" placeholder="Contraseña">
 
   <label class="terminos-check">
-    <input type="checkbox" id="aceptaTerminos">
-    Acepto los
-    <a href="terminos.html" target="_blank">
-      Términos y Condiciones
-    </a>
+    <input type="checkbox" id="terminos">
+    Acepto los <a href="terminos.html" target="_blank">Términos y Condiciones</a>
   </label>
 
-  <button class="btn primary" onclick="registrarUsuario()">
-    Crear cuenta
+  <button class="btn primary" onclick="registrar()">
+    Entrar al Clan
   </button>
 
-  <p style="margin-top:20px; opacity:.7;">
-    ¿Ya tenés cuenta? <a href="login.html">Iniciar sesión</a>
-  </p>
-
+  <p id="msg" class="error"></p>
 </main>
 
-<script src="js/auth.js"></script>
+<script>
+function registrar() {
+  const user = document.getElementById("user").value.trim();
+  const pass = document.getElementById("pass").value;
+  const acepta = document.getElementById("terminos").checked;
+
+  if (!user || !pass) {
+    return msg("Completá usuario y contraseña");
+  }
+
+  if (!acepta) {
+    return msg("Debés aceptar los términos");
+  }
+
+  // evitar sobreescribir usuarios
+  if (localStorage.getItem("aidflow_user_" + user)) {
+    return msg("Este usuario ya existe");
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const referidoPor = params.get("ref");
+
+  // OBJETO USUARIO (estructura correcta)
+  const userData = {
+    user,
+    pass,
+    nivel: 1,
+    saldo: 0,
+    pago: false,
+    referidoPor: referidoPor || null,
+    referidos: 0
+  };
+
+  // guardar usuario
+  localStorage.setItem(
+    "aidflow_user_" + user,
+    JSON.stringify(userData)
+  );
+
+  // usuario activo
+  localStorage.setItem("aidflow_user_activo", user);
+
+  // REFERIDOS
+  if (referidoPor) {
+    registrarReferido(referidoPor);
+  }
+
+  // ir a pago simulado
+  window.location.href = "pago.html";
+}
+
+/* =====================
+   REFERIDOS + DAO
+===================== */
+
+function registrarReferido(ref) {
+  const refs =
+    Number(localStorage.getItem("aidflow_refs_" + ref)) || 0;
+
+  localStorage.setItem(
+    "aidflow_refs_" + ref,
+    refs + 1
+  );
+
+  procesarPagoInicial(ref);
+}
+
+function procesarPagoInicial(ref) {
+  const pago = 10;
+
+  const refData =
+    JSON.parse(localStorage.getItem("aidflow_user_" + ref));
+
+  if (!refData) return;
+
+  let porcentaje = 0.4;
+  if (refData.nivel === 2) porcentaje = 0.45;
+  if (refData.nivel >= 3) porcentaje = 0.5;
+
+  const refGain = pago * porcentaje;
+  const daoGain = pago * 0.2;
+
+  refData.saldo += refGain;
+
+  localStorage.setItem(
+    "aidflow_user_" + ref,
+    JSON.stringify(refData)
+  );
+
+  const dao = Number(localStorage.getItem("aidflow_dao")) || 0;
+  localStorage.setItem("aidflow_dao", dao + daoGain);
+}
+
+function msg(texto) {
+  document.getElementById("msg").textContent = texto;
+}
+</script>
+
 </body>
 </html>

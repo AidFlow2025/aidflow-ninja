@@ -28,6 +28,16 @@
   </p>
 
 </main>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get("ref");
+
+  if (ref && !localStorage.getItem("aidflow_ref_origen")) {
+    localStorage.setItem("aidflow_ref_origen", ref);
+  }
+</script>
+
+
 
 <script src="js/auth.js"></script>
 </body>

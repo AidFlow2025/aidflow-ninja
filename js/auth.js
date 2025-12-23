@@ -88,3 +88,36 @@ function registrarUsuario() {
   // 👉 va a activar pase
   window.location.href = "pago.html";
 }
+
+
+function registrarNinja() {
+  const user = document.getElementById("reg-user").value;
+  const pass = document.getElementById("reg-pass").value;
+  const terminos = document.getElementById("reg-terminos").checked;
+
+  if (!user || !pass) {
+    mostrarError("Completá todos los campos");
+    return;
+  }
+
+  if (!terminos) {
+    mostrarError("Debés aceptar los términos");
+    return;
+  }
+
+  const data = {
+    user,
+    pass,
+    pago: false,
+    nivel: 1,
+    referidos: 0
+  };
+
+  localStorage.setItem("aidflow_user", JSON.stringify(data));
+  window.location.href = "pago.html";
+}
+
+function mostrarError(msg) {
+  const el = document.getElementById("reg-error");
+  if (el) el.textContent = msg;
+}

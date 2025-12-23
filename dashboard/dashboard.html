@@ -2,58 +2,177 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Panel Ninja — AidFlow</title>
+  <title>Dashboard Ninja</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="../css/main.css">
 </head>
 
 <body>
 
-<header class="dash-header">
-  <h1>🥷 Panel Ninja</h1>
-  <span id="ninjaName">Nivel: Recluta</span>
-</header>
+<!-- PROTECCIÓN -->
+<script src="../js/auth.js"></script>
+<script>
+  protegerRuta("user");
+</script>
 
-<main class="dashboard">
+<main class="container">
+
+  <h1>🥷 Panel del Ninja</h1>
 
   <!-- PROGRESO -->
-  <section class="card">
-    <h2>⚔️ Progreso del Ninja</h2>
-    <p>Shuriken disponibles: <strong id="shurikenCount">0</strong></p>
-    <p>Saldo retenido: <strong>$<span id="saldo">0.00</span></strong></p>
-    <button id="withdrawBtn" disabled>Retirar fondos</button>
-    <small>Los retiros se habilitan por tramos completados.</small>
+  <section class="card glow">
+    <h2>⚔️ Progreso</h2>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progreso-nivel1"></div>
+    </div>
+
+    <p id="info-nivel1">Tramos completados: 0 / 4</p>
   </section>
 
-  <!-- CICLO -->
+  <!-- ECONOMÍA -->
   <section class="card">
-    <h2>📊 Ciclo</h2>
-    <p>Tramos completados: <strong><span id="tramos">0</span> / 4</strong></p>
-    <progress id="progressBar" value="0" max="4"></progress>
+    <h2>💰 Economía</h2>
+
+    <p id="shuriken-nivel1">Shuriken: 0</p>
+    <p>Saldo: <strong id="saldo-usuario">$0.00</strong></p>
+
+    <button class="btn primary" id="btn-retiro" onclick="retirarFondos()" disabled>
+      Retirar fondos
+    </button>
+
+    <p style="opacity:.7;font-size:.9rem">
+      🔒 Retiros habilitados por tramos completados.
+    </p>
+  </section>
+
+  <!-- REFERIDOS -->
+  <section class="card">
+    <h2>👥 Referidos</h2>
+
+    <p>Total de referidos: <strong id="total-referidos">0</strong></p>
+
+    <label>
+      Tu link de referido:
+      <input type="text" id="link-referido" readonly>
+    </label>
+
+    <button class="btn secondary" onclick="copiarReferido()">
+      Copiar enlace
+    </button>
+  </section>
+
+  <!-- JUEGOS -->
+  <section class="card">
+    <h2>🎮 Juegos Ninja</h2>
+    <div id="juegos-container"></div>
+  </section>
+
+  <!-- TORNEOS -->
+  <section class="card">
+    <h2>🏆 Torneos</h2>
+    <p id="torneos-status">
+      🔒 Torneos se habilitan con 100 usuarios activos.
+    </p>
+    <button class="btn secondary" disabled>
+      Entrenamiento
+    </button>
   </section>
 
   <!-- RANKING -->
   <section class="card">
-    <h2>🏆 Ranking Ninja</h2>
-    <p id="rankingStatus">Bloqueado</p>
+    <h2>📊 Ranking (Duelos)</h2>
+    <ul id="ranking-list"></ul>
   </section>
 
-  <!-- TORNEOS -->
-  <section class="card locked">
-    <h2>🏆 Torneos</h2>
-    <p>🔒 Torneos bloqueados hasta 100 usuarios activos</p>
-    <button disabled>Entrar a torneo</button>
-  </section>
-
-  <!-- ENTRENAMIENTO -->
+  <!-- HISTORIAL -->
   <section class="card">
-    <h2>🎮 Modo Entrenamiento</h2>
-    <a href="../juegos.html" class="btn">Jugar</a>
+    <h2>📜 Historial</h2>
+    <p>Ciclos completados: <strong id="hist-ciclos">0</strong></p>
+    <p>Total ganado: <strong id="hist-total">$0.00</strong></p>
+    <p>Shuriken ganados: <strong id="hist-shuriken">0</strong></p>
+    <p>Último ciclo: <strong id="hist-fecha">—</strong></p>
   </section>
+
+  <!-- RECOMPRA -->
+  <button class="btn secondary" id="btn-recompra" style="display:none"
+          onclick="recomprarPaseNinja()">
+    🔁 Recomprar Pase Ninja
+  </button>
+
+  <button class="btn danger" onclick="logout()">Cerrar sesión</button>
 
 </main>
 
-<script src="dashboard.js"></script>
+<footer class="footer">
+  <p>© 2025 AidFlow Ninja</p>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="../js/economia.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/main.js"></script>
+
+<script>
+/* ======================
+   REFERIDOS
+====================== */
+function cargarReferidos() {
+  const user = localStorage.getItem("aidflow_user") || "ninja";
+  const refCount =
+    Number(localStorage.getItem("aidflow_refs_" + user)) || 0;
+
+  document.getElementById("total-referidos").textContent = refCount;
+
+  const link = `${location.origin}/register.html?ref=${user}`;
+  document.getElementById("link-referido").value = link;
+}
+
+function copiarReferido() {
+  const input = document.getElementById("link-referido");
+  input.select();
+  document.execCommand("copy");
+  alert("Link copiado 🥷");
+}
+
+/* ======================
+   JUEGOS EMBED
+====================== */
+function cargarJuegosUsuario() {
+  const juegos =
+    JSON.parse(localStorage.getItem("aidflow_juegos")) || [];
+
+  const container = document.getElementById("juegos-container");
+  container.innerHTML = "";
+
+  juegos
+    .filter(j => j.activo)
+    .forEach(j => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <h3>${j.nombre}</h3>
+        <iframe
+          src="${j.url}"
+          width="100%"
+          height="300"
+          frameborder="0"
+          allowfullscreen>
+        </iframe>
+      `;
+      container.appendChild(div);
+    });
+
+  if (!container.innerHTML) {
+    container.innerHTML = "<p>⏳ Juegos disponibles próximamente.</p>";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  cargarReferidos();
+  cargarJuegosUsuario();
+});
+</script>
+
 </body>
 </html>
-
