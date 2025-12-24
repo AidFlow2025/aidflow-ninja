@@ -373,3 +373,31 @@ function procesarReferido(monto = 10) {
 
   console.log("🧲 Referido procesado:", referidoPor);
 }
+
+
+function validarDisclaimer() {
+  const ok = document.getElementById("aceptaDisclaimer")?.checked;
+  if (!ok) {
+    alert("Debes aceptar el aviso para continuar");
+    return false;
+  }
+  return true;
+}
+
+
+function distribuirPago(monto) {
+  const referidoPor = localStorage.getItem("aidflow_ref_by_" + user);
+
+  // DAO
+  const daoParte = 2;
+  const dao = Number(localStorage.getItem("aidflow_dao")) || 0;
+  localStorage.setItem("aidflow_dao", dao + daoParte);
+
+  // Referido directo
+  if (referidoPor) {
+    const refGanancia = monto - daoParte;
+    const key = "aidflow_saldo_" + referidoPor;
+    const saldo = Number(localStorage.getItem(key)) || 0;
+    localStorage.setItem(key, saldo + refGanancia);
+  }
+}

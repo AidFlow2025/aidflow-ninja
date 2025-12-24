@@ -6,6 +6,14 @@
     menu.classList.toggle("active");
   });
 
+  // Usuario actual
+const user = localStorage.getItem("aidflow_user");
+
+if (!user) {
+  // si no hay sesión, lo sacamos
+  window.location.href = "/login.html";
+}
+
   // Cierra menú al tocar link (mobile)
   document.querySelectorAll(".nav a").forEach(link => {
     link.addEventListener("click", () => {
@@ -104,3 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+// =====================
+// MOSTRAR NOMBRE NINJA
+// =====================
+document.addEventListener("DOMContentLoaded", () => {
+  const nameSlot = document.getElementById("ninja-name");
+  if (nameSlot && user) {
+    nameSlot.textContent = user;
+  }
+});

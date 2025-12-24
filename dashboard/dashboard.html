@@ -9,6 +9,10 @@
 
 <body>
 
+  <header class="user-header">
+  <h1>🥷 Bienvenido, <span id="ninja-name"></span></h1>
+</header>
+
 <!-- PROTECCIÓN -->
 <script src="../js/auth.js"></script>
 <script>
@@ -45,6 +49,42 @@
       🔒 Retiros habilitados por tramos completados.
     </p>
   </section>
+
+  <section class="card">
+  <h2>💰 Tu Wallet</h2>
+  <p class="saldo">$<span id="wallet-saldo">0</span></p>
+</section>
+
+<button class="btn primary" onclick="pagarEntrada(10)">
+  🥷 Entrar al Dojo ($10)
+</button>
+
+  <!-- DISCLAIMER LEGAL -->
+<div class="card alert">
+  <p>
+    ⚠️ <strong>Aviso importante:</strong><br><br>
+
+    AidFlow Ninja es una plataforma de participación gamificada.
+    Los aportes realizados <strong>no constituyen inversión</strong>,
+    <strong>no garantizan ganancias</strong> ni retornos económicos.
+
+    <br><br>
+
+    La participación es voluntaria y bajo responsabilidad del usuario.
+  </p>
+
+  <label class="terminos-check">
+    <input type="checkbox" id="aceptaDisclaimer">
+    Entiendo y acepto este aviso
+  </label>
+</div>
+
+<label class="terminos-check">
+  <input type="checkbox" id="aceptaDisclaimer">
+  Entiendo y acepto el aviso legal para operaciones económicas
+</label>
+
+
 
   <!-- REFERIDOS -->
   <section class="card">

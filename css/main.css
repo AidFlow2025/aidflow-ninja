@@ -294,3 +294,12 @@ a {
   height: 220px;
   background: #000;
 }
+
+.card.alert {
+  border: 1px solid #7f1d1d;
+  background: linear-gradient(145deg, #0b0b0b, #160808);
+}
+
+.card.alert strong {
+  color: #ef4444;
+}
