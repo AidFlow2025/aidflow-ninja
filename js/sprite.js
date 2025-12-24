@@ -2,12 +2,10 @@ class Sprite {
   constructor(imgSrc, frameWidth, frameHeight, frameCount, speed = 8) {
     this.image = new Image();
     this.image.src = imgSrc;
-
     this.frameWidth = frameWidth;
     this.frameHeight = frameHeight;
     this.frameCount = frameCount;
     this.speed = speed;
-
     this.frameIndex = 0;
     this.tick = 0;
   }

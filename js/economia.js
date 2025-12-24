@@ -321,6 +321,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (usuario.nivel2Desbloqueado) {
     desbloquearNivel2();
   }
+
+  const yaPago = localStorage.getItem("aidflow_pago_" + user);
+if (yaPago === "true") {
+  document.querySelector("button[onclick*='pagarEntrada']").disabled = true;
+}
+
 });
 
 
@@ -400,4 +406,77 @@ function distribuirPago(monto) {
     const saldo = Number(localStorage.getItem(key)) || 0;
     localStorage.setItem(key, saldo + refGanancia);
   }
+}
+
+function pagarEntrada(monto) {
+  // VALIDAR DISCLAIMER
+  const acepta = document.getElementById("aceptaDisclaimer")?.checked;
+  if (!acepta) {
+    alert("Debes aceptar el aviso para continuar");
+    return;
+  }
+
+  const user = localStorage.getItem("aidflow_user");
+  if (!user) return alert("Sesión inválida");
+
+  // SIMULAMOS QUE EL USUARIO PAGA
+  distribuirPago(user, monto);
+
+  alert("Ingreso al Dojo confirmado 🥷");
+  location.reload();
+}
+
+function distribuirPago(user, monto) {
+  // ======== DESTINOS ========
+  const DAO = 2;
+  const MANT = 2;
+  const ADMIN = 2;
+  const REFERIDO = 4;
+
+  // DAO
+  sumarDAO(DAO);
+
+  // mantenimiento
+  sumarMantenimiento(MANT);
+
+  // admin
+  sumarAdmin(ADMIN);
+
+  // referidor
+  const ref = localStorage.getItem("aidflow_ref_by_" + user);
+
+  if (ref) {
+    sumarWallet(ref, REFERIDO);
+  } else {
+    sumarDAO(REFERIDO);
+  }
+
+  // marcar que ya pagó
+  localStorage.setItem("aidflow_pago_" + user, "true");
+}
+
+/* ======== FONDOS GLOBALES ======== */
+
+function sumarDAO(monto) {
+  const actual =
+    Number(localStorage.getItem("aidflow_dao")) || 0;
+  localStorage.setItem("aidflow_dao", actual + monto);
+}
+
+function sumarMantenimiento(monto) {
+  const actual =
+    Number(localStorage.getItem("aidflow_mantenimiento")) || 0;
+  localStorage.setItem(
+    "aidflow_mantenimiento",
+    actual + monto
+  );
+}
+
+function sumarAdmin(monto) {
+  const actual =
+    Number(localStorage.getItem("aidflow_admin_fondo")) || 0;
+  localStorage.setItem(
+    "aidflow_admin_fondo",
+    actual + monto
+  );
 }

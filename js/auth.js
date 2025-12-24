@@ -1,51 +1,52 @@
 function login() {
-  const user = document.getElementById("user").value.trim();
-  const pass = document.getElementById("pass").value;
-  const acepta = document.getElementById("aceptaTerminos");
-
-  const error = document.getElementById("login-error");
+  const user = document.getElementById("user")?.value.trim();
+  const pass = document.getElementById("pass")?.value;
 
   if (!user || !pass) {
-    error.textContent = "Completa usuario y contraseña";
+    mostrarError("Completa usuario y contraseña");
     return;
   }
 
-  if (acepta && !acepta.checked) {
-    error.textContent = "Debes aceptar los términos";
+  const savedPass = localStorage.getItem("aidflow_pass_" + user);
+
+  if (!savedPass || savedPass !== pass) {
+    mostrarError("Usuario o contraseña incorrectos");
     return;
   }
 
-  const passGuardada = localStorage.getItem("aidflow_pass_" + user);
-
-  if (!passGuardada || passGuardada !== pass) {
-    error.textContent = "Credenciales incorrectas";
-    return;
-  }
-
-  // ✅ AUTENTICACIÓN CORRECTA
+  // ✅ SESIÓN ACTIVA
   localStorage.setItem("aidflow_user", user);
+  localStorage.setItem("aidflow_auth", "true");
 
+  // limpiar error
+  mostrarError("");
+
+  // ir al dashboard
   window.location.href = "dashboard/index.html";
 }
 
-/* ======================
-   PROTECCIÓN DE RUTAS
-====================== */
-function protegerRuta(tipo = "user") {
-  if (tipo === "user") {
-    if (!localStorage.getItem("aidflow_user")) {
-      window.location.href = "../login.html";
-    }
-  }
-
-  if (tipo === "admin") {
-    if (localStorage.getItem("aidflow_admin_auth") !== "true") {
-      window.location.href = "index.html";
-    }
-  }
+function mostrarError(msg) {
+  const el = document.getElementById("login-error");
+  if (el) el.textContent = msg;
 }
 
+/* ==========================
+   LOGOUT USUARIO
+========================== */
 function logout() {
   localStorage.removeItem("aidflow_user");
+  localStorage.removeItem("aidflow_auth");
   window.location.href = "../login.html";
+}
+
+/* ==========================
+   PROTEGER RUTAS
+========================== */
+function protegerRuta() {
+  const user = localStorage.getItem("aidflow_user");
+  const auth = localStorage.getItem("aidflow_auth");
+
+  if (auth !== "true" || !user) {
+    window.location.href = "../login.html";
+  }
 }

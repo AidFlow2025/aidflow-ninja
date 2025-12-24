@@ -48,3 +48,26 @@ function pagarEntrada(monto = 10) {
   distribuirPago(monto);
   alert("Ingreso confirmado 🥷");
 }
+
+
+function obtenerWallet(user) {
+  return Number(localStorage.getItem("aidflow_wallet_" + user)) || 0;
+}
+
+function sumarWallet(user, monto) {
+  const saldo = obtenerWallet(user);
+  localStorage.setItem(
+    "aidflow_wallet_" + user,
+    saldo + monto
+  );
+}
+
+function restarWallet(user, monto) {
+  const saldo = obtenerWallet(user);
+  if (saldo < monto) return false;
+  localStorage.setItem(
+    "aidflow_wallet_" + user,
+    saldo - monto
+  );
+  return true;
+}

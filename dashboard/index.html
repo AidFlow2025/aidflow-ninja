@@ -6,164 +6,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../css/main.css">
 </head>
-<script src="../js/auth.js"></script>
-<script>
-  protegerRuta("user");
-</script>
 
 <body>
 
-<!-- PROTECCIÓN USER -->
+<!-- PROTECCIÓN -->
+<script src="../js/auth.js"></script>
 <script>
-  if (!localStorage.getItem("aidflow_user")) {
-    window.location.href = "../login.html";
-  }
+  protegerRuta();
 </script>
 
 <header class="admin-header">
   <div>
-    <h1>🥷 Panel del Ninja</h1>
+    <h1>🥷 Bienvenido, <span id="ninja-name"></span></h1>
     <p class="muted">Tu progreso dentro del Dojo</p>
   </div>
 
-  <button class="btn secondary" onclick="logout()">
-    Salir
-  </button>
+  <button class="btn secondary" onclick="logout()">Salir</button>
 </header>
 
 <main class="container admin-container">
 
-  <!-- ======================
-       ECONOMÍA
-  ======================= -->
+  <!-- WALLET -->
   <section class="card">
-    <h2>💰 Economía</h2>
-
-    <p>Saldo disponible:</p>
-    <p class="big-money" id="saldo">$0.00</p>
+    <h2>💰 Wallet Ninja</h2>
+    <p class="big-money">$<span id="wallet-saldo">0.00</span></p>
   </section>
 
-  <!-- ======================
-       REFERIDOS
-  ======================= -->
+  <!-- ENTRADA AL DOJO -->
+  <section class="card">
+    <h2>🥋 Acceso al Dojo</h2>
+
+    <!-- DISCLAIMER -->
+    <div class="card alert">
+      <p>
+        ⚠️ <strong>Aviso importante:</strong><br><br>
+        AidFlow Ninja es una plataforma gamificada.
+        Los aportes <strong>no constituyen inversión</strong>
+        ni garantizan retornos.
+      </p>
+
+      <label class="terminos-check">
+        <input type="checkbox" id="aceptaDisclaimer">
+        Entiendo y acepto este aviso
+      </label>
+    </div>
+
+    <button class="btn primary" onclick="pagarEntrada(10)">
+      🥷 Entrar al Dojo ($10)
+    </button>
+  </section>
+
+  <!-- REFERIDOS -->
   <section class="card">
     <h2>👥 Referidos</h2>
-
-    <p>Referidos activos:</p>
-    <p class="big-number" id="refs">0</p>
+    <p>Total: <strong id="total-referidos">0</strong></p>
 
     <label>
-      Tu link de referido
-      <input type="text" id="ref-link" readonly>
+      Tu link:
+      <input type="text" id="link-referido" readonly>
     </label>
 
-    <button class="btn primary" onclick="copiarReferido()">
+    <button class="btn secondary" onclick="copiarReferido()">
       Copiar link
     </button>
   </section>
-
-  <!-- ======================
-       NIVEL
-  ======================= -->
-  <section class="card">
-    <h2>⚔️ Nivel Ninja</h2>
-
-    <p>
-      Nivel actual:
-      <strong id="nivel">1</strong>
-    </p>
-
-    <p class="muted">
-      A mayor nivel, mejores recompensas y velocidad de micropagos
-    </p>
-  </section>
-
-  <!-- ======================
-       JUEGOS
-  ======================= -->
-  <section class="card locked">
-    <h2>🎮 Juegos</h2>
-
-    <p id="estado-juegos">
-      🔒 Se desbloquean al alcanzar 100 usuarios activos
-    </p>
-
-    <button class="btn secondary" disabled>
-      Entrar a Juegos
-    </button>
-  </section>
-
-
-  <!-- ======================
-     DUELOS NINJA
-====================== -->
-<section class="card" id="seccion-duelos">
-  <h2>⚔️ Duelos Ninja</h2>
-
-  <p id="duelo-status" class="muted">
-    Verificando requisitos...
-  </p>
-
-  <button
-    class="btn primary"
-    id="btn-duelo"
-    style="display:none;"
-    onclick="entrarDuelo()">
-    ⚔️ Entrar a un Duelo ($0.25)
-  </button>
-</section>
-
-  <!-- ======================
-       TORNEOS
-  ======================= -->
-  <section class="card locked">
-    <h2>🏆 Torneos</h2>
-
-    <p id="estado-torneo">
-      🔒 Próximamente
-    </p>
-
-    <button class="btn secondary" disabled>
-      Ver Torneos
-    </button>
-  </section>
-<!-- ======================
-     TORNEO ACTIVO
-====================== -->
-<section class="card" id="seccion-torneo">
-  <h2>🏆 Torneo Ninja</h2>
-
-  <p id="torneo-estado" class="muted">
-    Cargando estado del torneo...
-  </p>
-
-  <ul id="torneo-info" style="display:none;">
-    <li>💰 Pozo total: <strong id="torneo-pozo-view">$0</strong></li>
-    <li>🏅 Ganadores: <strong id="torneo-ganadores-view">0</strong></li>
-  </ul>
-
-  <button
-    class="btn primary"
-    id="btn-torneo-entrar"
-    style="display:none;"
-    onclick="entrarTorneo()">
-    ⚔️ Entrar al Torneo
-  </button>
-</section>
-
-  <!-- ======================
-     JUEGOS DEL DOJO
-====================== -->
-<section class="card" id="seccion-juegos" style="display:none;">
-  <h2>🎮 Dojo Arcade</h2>
-
-  <p class="muted">
-    Juegos de entrenamiento ninja.  
-    No otorgan recompensas, solo habilidad.
-  </p>
-
-  <div id="juegos-embed" class="games-grid"></div>
-</section>
 
 </main>
 
@@ -171,70 +77,32 @@
   <p>© 2025 AidFlow Ninja</p>
 </footer>
 
+<!-- SCRIPTS -->
+<script src="../js/wallet.js"></script>
+<script src="../js/economia.js"></script>
+<script src="../js/main.js"></script>
+
 <script>
-function logout() {
-  localStorage.removeItem("aidflow_user");
-  window.location.href = "../login.html";
-}
-
-function copiarReferido() {
-  const input = document.getElementById("ref-link");
-  input.select();
-  document.execCommand("copy");
-  alert("Link copiado 🥷");
-}
-
-
-<!-- ======================
-     DUELOS NINJA
-====================== -->
-<section class="card" id="seccion-duelos">
-  <h2>⚔️ Duelos Ninja</h2>
-
-  <p id="duelo-status" class="muted">
-    Verificando requisitos...
-  </p>
-
-  <button
-    class="btn primary"
-    id="btn-duelo"
-    style="display:none;"
-    onclick="entrarDuelo()">
-    ⚔️ Entrar a un Duelo ($0.25)
-  </button>
-</section>
-
-function cargarDashboard() {
+document.addEventListener("DOMContentLoaded", () => {
   const user = localStorage.getItem("aidflow_user");
 
-  // Saldo
+  document.getElementById("ninja-name").textContent = user;
+
+  // wallet
   const saldo =
-    Number(localStorage.getItem("aidflow_saldo_" + user)) || 0;
-  document.getElementById("saldo").textContent =
-    "$" + saldo.toFixed(2);
+    Number(localStorage.getItem("aidflow_wallet_" + user)) || 0;
+  document.getElementById("wallet-saldo").textContent =
+    saldo.toFixed(2);
 
-  // Nivel
-  const nivel =
-    localStorage.getItem("aidflow_nivel_" + user) || "1";
-  document.getElementById("nivel").textContent = nivel;
-
-  // Referidos
+  // referidos
   const refs =
     Number(localStorage.getItem("aidflow_refs_" + user)) || 0;
-  document.getElementById("refs").textContent = refs;
+  document.getElementById("total-referidos").textContent = refs;
 
-  // Link referido
-  const link =
-    window.location.origin +
-    "/register.html?ref=" + user;
-
-  document.getElementById("ref-link").value = link;
-}
-
-
-document.addEventListener("DOMContentLoaded", cargarDashboard);
+  const link = `${location.origin}/register.html?ref=${user}`;
+  document.getElementById("link-referido").value = link;
+});
 </script>
-<script src="../js/duelos.js"></script>
 
 </body>
 </html>
