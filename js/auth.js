@@ -17,13 +17,12 @@ function login() {
     return;
   }
 
-  // ✅ SESIÓN ACTIVA
+  // SESIÓN ACTIVA
   localStorage.setItem("aidflow_user", user);
   localStorage.setItem("aidflow_auth", "true");
 
   mostrarError("");
 
-  // 👉 ir al dashboard del usuario
   window.location.href = "/dashboard/index.html";
 }
 
@@ -36,7 +35,7 @@ function mostrarError(msg) {
 }
 
 /* ==========================
-   LOGOUT USUARIO
+   LOGOUT
 ========================== */
 function logout() {
   localStorage.removeItem("aidflow_user");

@@ -1,140 +1,98 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Panel Ninja — AidFlow Ninja</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../css/main.css">
+  <meta charset="UTF-8" />
+  <title>Dashboard Ninja — AidFlow Ninja</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/main.css" />
 </head>
 
 <body>
 
-<!-- PROTECCIÓN -->
+<!-- ======================
+     PROTECCIÓN DE RUTA
+====================== -->
+<script src="../js/auth.js"></script>
 <script>
-  if (
-    localStorage.getItem("aidflow_auth") !== "true" ||
-    !localStorage.getItem("aidflow_user")
-  ) {
-    window.location.href = "../login.html";
-  }
+  protegerRuta();
 </script>
 
-<header class="header">
-  <h1>🥷 Panel del Ninja</h1>
-  <button class="btn secondary" onclick="logout()">Salir</button>
+<!-- ======================
+     HEADER
+====================== -->
+<header class="dashboard-header">
+  <div>
+    <h1>🥷 Panel del Ninja</h1>
+    <p class="muted" id="ninja-nombre"></p>
+  </div>
+
+  <button class="btn secondary" onclick="logout()">
+    Cerrar sesión
+  </button>
 </header>
 
-<main class="container">
+<main class="container dashboard-container">
 
-  <!-- ======================
-       BIENVENIDA
-  ======================= -->
-  <section class="card">
-    <h2 id="saludo-ninja">Bienvenido</h2>
-    <p class="muted">Este es tu dojo personal</p>
-  </section>
-
-  <!-- ======================
-       ECONOMÍA / WALLET
-  ======================= -->
+  <!-- WALLET -->
   <section class="card">
     <h2>💰 Wallet Ninja</h2>
-
-    <p>Saldo disponible:</p>
-    <h3 id="saldo-usuario">$0.00</h3>
-
-    <button class="btn primary" disabled>
-      Retirar (próximamente)
+    <p>
+      Saldo disponible:
+      <strong>$<span id="wallet-saldo">0.00</span></strong>
+    </p>
+    <button class="btn primary" onclick="sumarSaldo(10)">
+      ➕ Simular ingreso $10
     </button>
   </section>
-  <section class="card">
-  <h2>💰 Wallet Ninja</h2>
-  <p>Saldo actual: <strong id="wallet-saldo">$0</strong></p>
 
-  <ul id="wallet-historial"></ul>
-
-  <!-- solo para pruebas -->
-  <button onclick="sumarSaldo(10, 'Ingreso simulado')">
-    Simular pago $10
-  </button>
-</section>
-
-
-  <!-- ======================
-       JUEGOS
-  ======================= -->
-  <section class="card">
-    <h2>🎮 Juegos del Dojo</h2>
-
-    <p class="muted">
-      Juegos habilitados por el clan
-    </p>
-
-    <div id="lista-juegos">
-      <p class="muted">Cargando juegos...</p>
-    </div>
-  </section>
-
-
-
-  <!-- ======================
-     JUEGOS DISPONIBLES
-====================== -->
-<section class="card">
-  <h2>🎮 Dojo Ninja</h2>
-  <p class="muted">Juegos disponibles para entrenar y competir</p>
-
-  <div id="user-games"></div>
-</section>
-
-<section class="card">
-  <h2>🕹️ Arcade Ninja</h2>
-  <div id="embed-games"></div>
-</section>
-
-<div id="dojo-estado" class="card"></div>
-
-
-  <!-- ======================
-       REFERIDOS
-  ======================= -->
+  <!-- REFERIDOS -->
   <section class="card">
     <h2>🧲 Referidos</h2>
-
     <p>
-      Invitá ninjas y ganá recompensas
+      Tus referidos:
+      <strong id="mis-referidos">0</strong>
     </p>
+    <p class="muted">Compartí este enlace:</p>
+    <input type="text" id="link-referido" readonly onclick="this.select()" />
+  </section>
 
-    <p>
-      Total de referidos:
-      <strong id="total-referidos">0</strong>
-    </p>
-
-    <input
-      type="text"
-      id="link-referido"
-      readonly
-    >
-
-    <button class="btn secondary" onclick="copiarReferido()">
-      Copiar enlace
+  <!-- DOJO -->
+  <section class="card">
+    <h2>🎮 Dojo Ninja</h2>
+    <p class="muted">Juegos de entrenamiento y torneos</p>
+    <button class="btn primary" onclick="abrirDojo()">
+      Entrar al Dojo
     </button>
+    <div id="zona-juego" style="margin-top:20px;"></div>
   </section>
 
 </main>
 
 <footer class="footer">
   <p>© 2025 AidFlow Ninja</p>
+  <p>Ayuda mutua · Mérito · Transparencia</p>
 </footer>
 
-<!-- SCRIPTS -->
-
-<script src="../js/auth.js"></script>
+<!-- ======================
+     SCRIPTS
+====================== -->
 <script src="../js/wallet.js"></script>
 <script src="../js/economia.js"></script>
 <script src="../js/dojo.js"></script>
-<script src="dashboard.js"></script>
-<script src="../js/ui.js"></script>
+
+<script>
+  const user = localStorage.getItem("aidflow_user");
+
+  document.getElementById("ninja-nombre").textContent =
+    "Bienvenido, " + user;
+
+  const refs =
+    Number(localStorage.getItem("aidflow_refs_" + user)) || 0;
+  document.getElementById("mis-referidos").textContent = refs;
+
+  document.getElementById("link-referido").value =
+    window.location.origin + "/register.html?ref=" + user;
+</script>
 
 </body>
 </html>
