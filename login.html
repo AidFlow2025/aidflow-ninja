@@ -13,12 +13,28 @@
 
   <h1>🥷 Acceso Ninja</h1>
 
-  <input type="text" id="user" placeholder="Usuario Ninja">
-  <input type="password" id="pass" placeholder="Contraseña">
+  <!-- FORMULARIO (evita warning del navegador) -->
+  <form onsubmit="event.preventDefault(); login();">
 
-  <button class="btn primary" onclick="login()">
-    Entrar
-  </button>
+    <input
+      type="text"
+      id="user"
+      placeholder="Usuario Ninja"
+      autocomplete="username"
+    >
+
+    <input
+      type="password"
+      id="pass"
+      placeholder="Contraseña"
+      autocomplete="current-password"
+    >
+
+    <button type="submit" class="btn primary">
+      Entrar
+    </button>
+
+  </form>
 
   <p id="login-error" style="color:#ef4444; margin-top:10px;"></p>
 
@@ -28,7 +44,24 @@
   </p>
 
 </main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <p>© 2025 AidFlow Ninja</p>
+  <p>Ayuda mutua · Mérito · Transparencia</p>
+  <a href="privacidad.html" target="_blank">Política de Privacidad</a>
+</footer>
+
+<!-- ================= SCRIPTS ================= -->
+
+<!-- 1️⃣ auth.js PRIMERO -->
+<script src="js/auth.js"></script>
+
+<!-- 2️⃣ recién ahora podemos usar sus funciones -->
 <script>
+  bloquearLoginSiAutenticado();
+
+  // guardar referido si viene por URL
   const params = new URLSearchParams(window.location.search);
   const ref = params.get("ref");
 
@@ -37,19 +70,5 @@
   }
 </script>
 
-<script>
-  bloquearLoginSiAutenticado();
-</script>
-<script src="js/auth.js"></script>
-
 </body>
-
-
-<!-- ================= FOOTER ================= -->
-<footer class="footer" id="contacto">
-  <p>© 2025 AidFlow Ninja</p>
-  <p>Ayuda mutua · Mérito · Transparencia</p>
-  <a href="privacidad.html" target="_blank">Política de Privacidad</a>
-
-</footer>
 </html>
