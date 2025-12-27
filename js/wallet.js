@@ -1,73 +1,125 @@
-// =====================
-// WALLET INTERNA
-// =====================
+/* ==========================
+   WALLET INTERNA – AidFlow Ninja
+========================== */
 
-const user = localStorage.getItem("aidflow_user");
-
-function getSaldo() {
-  return Number(localStorage.getItem("aidflow_saldo_" + user)) || 0;
+function getUser() {
+  return localStorage.getItem("aidflow_user");
 }
 
-function setSaldo(monto) {
-  localStorage.setItem("aidflow_saldo_" + user, monto);
-}
+/* ==========================
+   CREAR WALLET (si no existe)
+========================== */
+function crearWalletSiNoExiste() {
+  const user = getUser();
+  if (!user) return;
 
-function sumarSaldo(monto) {
-  const nuevo = getSaldo() + monto;
-  setSaldo(nuevo);
-  actualizarVistaWallet();
-}
-
-function restarSaldo(monto) {
-  const saldo = getSaldo();
-  if (saldo < monto) {
-    alert("Saldo insuficiente");
-    return false;
-  }
-  setSaldo(saldo - monto);
-  actualizarVistaWallet();
-  return true;
-}
-
-function actualizarVistaWallet() {
-  const slot = document.getElementById("wallet-saldo");
-  if (slot) {
-    slot.textContent = getSaldo().toFixed(2);
+  const key = "aidflow_wallet_" + user;
+  if (localStorage.getItem(key) === null) {
+    localStorage.setItem(key, JSON.stringify({
+      saldo: 0,
+      historial: []
+    }));
   }
 }
 
-document.addEventListener("DOMContentLoaded", actualizarVistaWallet);
+/* ==========================
+   OBTENER WALLET
+========================== */
+function obtenerWallet() {
+  const user = getUser();
+  if (!user) return null;
 
-
-function pagarEntrada(monto = 10) {
-  if (!validarDisclaimer()) return;
-
-  const ok = restarSaldo(monto);
-  if (!ok) return;
-
-  distribuirPago(monto);
-  alert("Ingreso confirmado 🥷");
+  const key = "aidflow_wallet_" + user;
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : null;
 }
 
+/* ==========================
+   GUARDAR WALLET
+========================== */
+function guardarWallet(wallet) {
+  const user = getUser();
+  if (!user) return;
 
-function obtenerWallet(user) {
-  return Number(localStorage.getItem("aidflow_wallet_" + user)) || 0;
+  const key = "aidflow_wallet_" + user;
+  localStorage.setItem(key, JSON.stringify(wallet));
 }
 
-function sumarWallet(user, monto) {
-  const saldo = obtenerWallet(user);
-  localStorage.setItem(
-    "aidflow_wallet_" + user,
-    saldo + monto
-  );
+/* ==========================
+   SUMAR SALDO
+========================== */
+function sumarSaldo(monto, motivo = "Ingreso") {
+  const wallet = obtenerWallet();
+  if (!wallet) return;
+
+  wallet.saldo += monto;
+  wallet.historial.push({
+    tipo: "ENTRADA",
+    monto,
+    motivo,
+    fecha: new Date().toISOString()
+  });
+
+  guardarWallet(wallet);
+  renderWallet();
 }
 
-function restarWallet(user, monto) {
-  const saldo = obtenerWallet(user);
-  if (saldo < monto) return false;
-  localStorage.setItem(
-    "aidflow_wallet_" + user,
-    saldo - monto
-  );
+/* ==========================
+   RESTAR SALDO
+========================== */
+function restarSaldo(monto, motivo = "Gasto") {
+  const wallet = obtenerWallet();
+  if (!wallet) return false;
+
+  if (wallet.saldo < monto) return false;
+
+  wallet.saldo -= monto;
+  wallet.historial.push({
+    tipo: "SALIDA",
+    monto,
+    motivo,
+    fecha: new Date().toISOString()
+  });
+
+  guardarWallet(wallet);
+  renderWallet();
   return true;
+}
+
+/* ==========================
+   OBTENER SALDO
+========================== */
+function obtenerSaldo() {
+  const wallet = obtenerWallet();
+  return wallet ? wallet.saldo : 0;
+}
+
+/* ==========================
+   RENDER WALLET (UI)
+========================== */
+function renderWallet() {
+  const wallet = obtenerWallet();
+  if (!wallet) return;
+
+  const saldoEl = document.getElementById("wallet-saldo");
+  if (saldoEl) {
+    saldoEl.textContent = "$" + wallet.saldo.toFixed(2);
+  }
+
+  const histEl = document.getElementById("wallet-historial");
+  if (histEl) {
+    histEl.innerHTML = "";
+    wallet.historial.slice().reverse().forEach(h => {
+      const li = document.createElement("li");
+      li.textContent = `${h.tipo} $${h.monto} — ${h.motivo}`;
+      histEl.appendChild(li);
+    });
+  }
+}
+
+/* ==========================
+   BLOQUEO POR PAGO
+========================== */
+function tieneAccesoBasico() {
+  return obtenerSaldo() >= 10;
 }

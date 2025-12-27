@@ -81,3 +81,8 @@ function actualizarDashboard() {
 document.addEventListener("DOMContentLoaded", () => {
   actualizarDashboard();
 });
+
+
+protegerRuta();
+crearWalletSiNoExiste();
+renderWallet();

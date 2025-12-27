@@ -480,3 +480,8 @@ function sumarAdmin(monto) {
     actual + monto
   );
 }
+
+function obtenerUsuariosActivos() {
+  return Number(localStorage.getItem("aidflow_usuarios_activos")) || 0;
+}
+

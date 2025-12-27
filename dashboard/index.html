@@ -47,6 +47,18 @@
       Retirar (próximamente)
     </button>
   </section>
+  <section class="card">
+  <h2>💰 Wallet Ninja</h2>
+  <p>Saldo actual: <strong id="wallet-saldo">$0</strong></p>
+
+  <ul id="wallet-historial"></ul>
+
+  <!-- solo para pruebas -->
+  <button onclick="sumarSaldo(10, 'Ingreso simulado')">
+    Simular pago $10
+  </button>
+</section>
+
 
   <!-- ======================
        JUEGOS
@@ -79,6 +91,8 @@
   <h2>🕹️ Arcade Ninja</h2>
   <div id="embed-games"></div>
 </section>
+
+<div id="dojo-estado" class="card"></div>
 
 
   <!-- ======================
@@ -114,9 +128,12 @@
 </footer>
 
 <!-- SCRIPTS -->
+
 <script src="../js/auth.js"></script>
+<script src="../js/wallet.js"></script>
 <script src="../js/economia.js"></script>
 <script src="../js/dojo.js"></script>
+<script src="dashboard.js"></script>
 <script src="../js/ui.js"></script>
 
 </body>
