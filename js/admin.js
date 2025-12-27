@@ -385,3 +385,230 @@ document.addEventListener("DOMContentLoaded", () => {
   const inputDAO = document.getElementById("dao-fondo");
   if (inputDAO) inputDAO.value = dao;
 });
+
+function obtenerJuegos() {
+  const base = {
+    survival: {
+      name: "Survival Ninja",
+      enabled: true,
+      type: "torneo"
+    },
+    duelos: {
+      name: "Duelos Ninja 1v1",
+      enabled: false,
+      type: "duelo"
+    },
+    training: {
+      name: "Modo Entrenamiento",
+      enabled: true,
+      type: "free"
+    }
+  };
+
+  return (
+    JSON.parse(localStorage.getItem("aidflow_games")) || base
+  );
+}
+
+function guardarJuegos(juegos) {
+  localStorage.setItem("aidflow_games", JSON.stringify(juegos));
+}
+
+function renderAdminJuegos() {
+  const ul = document.getElementById("admin-games");
+  if (!ul) return;
+
+  const juegos = obtenerJuegos();
+  ul.innerHTML = "";
+
+  Object.keys(juegos).forEach(key => {
+    const j = juegos[key];
+
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <div>
+        <span>${j.name}</span><br>
+        <small>Tipo: ${j.type}</small>
+      </div>
+      <label class="toggle-btn">
+        <input type="checkbox" ${
+          j.enabled ? "checked" : ""
+        } onchange="toggleJuego('${key}')">
+        ${j.enabled ? "Activo" : "Inactivo"}
+      </label>
+    `;
+
+    ul.appendChild(li);
+  });
+}
+
+function toggleJuego(id) {
+  const juegos = obtenerJuegos();
+  juegos[id].enabled = !juegos[id].enabled;
+  guardarJuegos(juegos);
+  renderAdminJuegos();
+}
+
+function resetJuegosAdmin() {
+  localStorage.removeItem("aidflow_games");
+  renderAdminJuegos();
+}
+
+document.addEventListener("DOMContentLoaded", renderAdminJuegos);
+
+
+
+function cargarFondosAdmin() {
+  const dao =
+    Number(localStorage.getItem("aidflow_dao")) || 0;
+  const admin =
+    Number(localStorage.getItem("aidflow_admin_fondo")) || 0;
+  const mant =
+    Number(localStorage.getItem("aidflow_mantenimiento")) || 0;
+
+  const total = dao + admin + mant;
+
+  if (document.getElementById("admin-dao"))
+    document.getElementById("admin-dao").textContent = "$" + dao;
+
+  if (document.getElementById("admin-admin"))
+    document.getElementById("admin-admin").textContent = "$" + admin;
+
+  if (document.getElementById("admin-mant"))
+    document.getElementById("admin-mant").textContent = "$" + mant;
+
+  if (document.getElementById("admin-total"))
+    document.getElementById("admin-total").textContent = "$" + total;
+}
+
+/* ======================
+   JUEGOS (ADMIN)
+====================== */
+
+const juegosDefault = [
+  {
+    id: "ninja-survival",
+    nombre: "Ninja Survival",
+    url: "../games/ninja-survival/index.html",
+    tipo: "torneo",
+    activo: true
+  },
+  {
+    id: "tetris-ninja",
+    nombre: "Tetris Ninja",
+    url: "../games/tetris/index.html",
+    tipo: "entrenamiento",
+    activo: false
+  }
+];
+
+function cargarJuegosAdmin() {
+  let juegos = JSON.parse(localStorage.getItem("aidflow_games"));
+
+  if (!juegos) {
+    localStorage.setItem("aidflow_games", JSON.stringify(juegosDefault));
+    juegos = juegosDefault;
+  }
+
+  const lista = document.getElementById("admin-games-list");
+  if (!lista) return;
+
+  lista.innerHTML = "";
+
+  juegos.forEach((juego, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <strong>${juego.nombre}</strong>
+      <span class="badge">${juego.tipo}</span>
+      <label style="margin-left:10px;">
+        <input type="checkbox" ${juego.activo ? "checked" : ""}
+          onchange="toggleJuego(${index})">
+        Activo
+      </label>
+    `;
+    lista.appendChild(li);
+  });
+}
+
+function toggleJuego(index) {
+  const juegos = JSON.parse(localStorage.getItem("aidflow_games"));
+  juegos[index].activo = !juegos[index].activo;
+  localStorage.setItem("aidflow_games", JSON.stringify(juegos));
+  cargarJuegosAdmin();
+}
+
+function resetearJuegos() {
+  localStorage.setItem("aidflow_games", JSON.stringify(juegosDefault));
+  cargarJuegosAdmin();
+}
+/* ======================
+   JUEGOS EMBED (ADMIN)
+====================== */
+
+function agregarJuegoEmbed() {
+  const nombre = document.getElementById("embed-nombre").value.trim();
+  const url = document.getElementById("embed-url").value.trim();
+
+  if (!nombre || !url) {
+    alert("Completa nombre y URL");
+    return;
+  }
+
+  const juegos =
+    JSON.parse(localStorage.getItem("aidflow_games")) || [];
+
+  juegos.push({
+    id: "embed-" + Date.now(),
+    nombre,
+    url,
+    tipo: "embed",
+    activo: true
+  });
+
+  localStorage.setItem("aidflow_games", JSON.stringify(juegos));
+
+  document.getElementById("embed-nombre").value = "";
+  document.getElementById("embed-url").value = "";
+
+  cargarJuegosAdmin();
+  cargarEmbedsAdmin();
+}
+
+function cargarEmbedsAdmin() {
+  const lista = document.getElementById("admin-embed-list");
+  if (!lista) return;
+
+  const juegos =
+    JSON.parse(localStorage.getItem("aidflow_games")) || [];
+
+  lista.innerHTML = "";
+
+  juegos
+    .filter(j => j.tipo === "embed")
+    .forEach((j, i) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        ${j.nombre}
+        <button onclick="eliminarJuego(${i})">❌</button>
+      `;
+      lista.appendChild(li);
+    });
+}
+
+function eliminarJuego(index) {
+  const juegos =
+    JSON.parse(localStorage.getItem("aidflow_games")) || [];
+
+  juegos.splice(index, 1);
+  localStorage.setItem("aidflow_games", JSON.stringify(juegos));
+
+  cargarJuegosAdmin();
+  cargarEmbedsAdmin();
+}
+
+document.addEventListener("DOMContentLoaded", cargarEmbedsAdmin);
+
+document.addEventListener("DOMContentLoaded", cargarJuegosAdmin);
+
+document.addEventListener("DOMContentLoaded", cargarFondosAdmin);

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard — AidFlow Ninja</title>
+  <title>Panel Ninja — AidFlow Ninja</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../css/main.css">
 </head>
@@ -10,64 +10,100 @@
 <body>
 
 <!-- PROTECCIÓN -->
-<script src="../js/auth.js"></script>
 <script>
-  protegerRuta();
+  if (
+    localStorage.getItem("aidflow_auth") !== "true" ||
+    !localStorage.getItem("aidflow_user")
+  ) {
+    window.location.href = "../login.html";
+  }
 </script>
 
-<header class="admin-header">
-  <div>
-    <h1>🥷 Bienvenido, <span id="ninja-name"></span></h1>
-    <p class="muted">Tu progreso dentro del Dojo</p>
-  </div>
-
+<header class="header">
+  <h1>🥷 Panel del Ninja</h1>
   <button class="btn secondary" onclick="logout()">Salir</button>
 </header>
 
-<main class="container admin-container">
+<main class="container">
 
-  <!-- WALLET -->
+  <!-- ======================
+       BIENVENIDA
+  ======================= -->
   <section class="card">
-    <h2>💰 Wallet Ninja</h2>
-    <p class="big-money">$<span id="wallet-saldo">0.00</span></p>
+    <h2 id="saludo-ninja">Bienvenido</h2>
+    <p class="muted">Este es tu dojo personal</p>
   </section>
 
-  <!-- ENTRADA AL DOJO -->
+  <!-- ======================
+       ECONOMÍA / WALLET
+  ======================= -->
   <section class="card">
-    <h2>🥋 Acceso al Dojo</h2>
+    <h2>💰 Wallet Ninja</h2>
 
-    <!-- DISCLAIMER -->
-    <div class="card alert">
-      <p>
-        ⚠️ <strong>Aviso importante:</strong><br><br>
-        AidFlow Ninja es una plataforma gamificada.
-        Los aportes <strong>no constituyen inversión</strong>
-        ni garantizan retornos.
-      </p>
+    <p>Saldo disponible:</p>
+    <h3 id="saldo-usuario">$0.00</h3>
 
-      <label class="terminos-check">
-        <input type="checkbox" id="aceptaDisclaimer">
-        Entiendo y acepto este aviso
-      </label>
-    </div>
-
-    <button class="btn primary" onclick="pagarEntrada(10)">
-      🥷 Entrar al Dojo ($10)
+    <button class="btn primary" disabled>
+      Retirar (próximamente)
     </button>
   </section>
 
-  <!-- REFERIDOS -->
+  <!-- ======================
+       JUEGOS
+  ======================= -->
   <section class="card">
-    <h2>👥 Referidos</h2>
-    <p>Total: <strong id="total-referidos">0</strong></p>
+    <h2>🎮 Juegos del Dojo</h2>
 
-    <label>
-      Tu link:
-      <input type="text" id="link-referido" readonly>
-    </label>
+    <p class="muted">
+      Juegos habilitados por el clan
+    </p>
+
+    <div id="lista-juegos">
+      <p class="muted">Cargando juegos...</p>
+    </div>
+  </section>
+
+
+
+  <!-- ======================
+     JUEGOS DISPONIBLES
+====================== -->
+<section class="card">
+  <h2>🎮 Dojo Ninja</h2>
+  <p class="muted">Juegos disponibles para entrenar y competir</p>
+
+  <div id="user-games"></div>
+</section>
+
+<section class="card">
+  <h2>🕹️ Arcade Ninja</h2>
+  <div id="embed-games"></div>
+</section>
+
+
+  <!-- ======================
+       REFERIDOS
+  ======================= -->
+  <section class="card">
+    <h2>🧲 Referidos</h2>
+
+    <p>
+      Invitá ninjas y ganá recompensas
+    </p>
+
+    <p>
+      Total de referidos:
+      <strong id="total-referidos">0</strong>
+    </p>
+
+    <input
+      type="text"
+      id="link-referido"
+      readonly
+    >
 
     <button class="btn secondary" onclick="copiarReferido()">
-      Copiar link
+      Copiar enlace
     </button>
   </section>
 
@@ -78,31 +114,10 @@
 </footer>
 
 <!-- SCRIPTS -->
-<script src="../js/wallet.js"></script>
+<script src="../js/auth.js"></script>
 <script src="../js/economia.js"></script>
-<script src="../js/main.js"></script>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const user = localStorage.getItem("aidflow_user");
-
-  document.getElementById("ninja-name").textContent = user;
-
-  // wallet
-  const saldo =
-    Number(localStorage.getItem("aidflow_wallet_" + user)) || 0;
-  document.getElementById("wallet-saldo").textContent =
-    saldo.toFixed(2);
-
-  // referidos
-  const refs =
-    Number(localStorage.getItem("aidflow_refs_" + user)) || 0;
-  document.getElementById("total-referidos").textContent = refs;
-
-  const link = `${location.origin}/register.html?ref=${user}`;
-  document.getElementById("link-referido").value = link;
-});
-</script>
+<script src="../js/dojo.js"></script>
+<script src="../js/ui.js"></script>
 
 </body>
 </html>

@@ -303,3 +303,58 @@ a {
 .card.alert strong {
   color: #ef4444;
 }
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.stat-box {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-box h3 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.stat-box p {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+
+.admin-games {
+  list-style: none;
+  padding: 0;
+  margin-top: 16px;
+}
+
+.admin-games li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0f0f0f;
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.admin-games span {
+  font-weight: 600;
+}
+
+.admin-games small {
+  opacity: 0.6;
+  font-size: 0.8rem;
+}
+
+.toggle-btn {
+  cursor: pointer;
+}

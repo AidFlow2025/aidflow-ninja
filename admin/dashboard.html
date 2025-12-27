@@ -42,6 +42,33 @@
       Guardar DAO
     </button>
   </section>
+<!-- ======================
+     GESTIÓN DE JUEGOS
+====================== -->
+<section class="card">
+  <h2>🎮 Gestión de Juegos</h2>
+  <p class="muted">Activá o desactivá juegos visibles para los usuarios</p>
+
+  <ul id="admin-games-list"></ul>
+
+  <button class="btn secondary" onclick="resetearJuegos()">
+    🔄 Resetear juegos por defecto
+  </button>
+</section>
+
+<section class="card">
+  <h2>🧩 Juegos Embebidos</h2>
+
+  <input id="embed-nombre" placeholder="Nombre del juego">
+  <input id="embed-url" placeholder="URL del juego (iframe)">
+
+  <button class="btn primary" onclick="agregarJuegoEmbed()">
+    ➕ Agregar juego
+  </button>
+
+  <ul id="admin-embed-list"></ul>
+</section>
+
 
   <!-- ======================
        SISTEMA
@@ -68,6 +95,60 @@
       Guardar sistema
     </button>
   </section>
+
+
+  <!-- ======================
+     ECONOMÍA GENERAL
+====================== -->
+<section class="card">
+  <h2>📦 Fondos del Sistema</h2>
+
+  <p class="muted">
+    Resumen de distribución automática de ingresos
+  </p>
+
+  <div class="grid-3">
+    <div class="stat-box">
+      <h3>🏛️ DAO</h3>
+      <p id="admin-dao">$0</p>
+    </div>
+
+    <div class="stat-box">
+      <h3>👑 Admin</h3>
+      <p id="admin-admin">$0</p>
+    </div>
+
+    <div class="stat-box">
+      <h3>🔧 Mantenimiento</h3>
+      <p id="admin-mant">$0</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <p>
+    💰 Total distribuido:
+    <strong id="admin-total">$0</strong>
+  </p>
+</section>
+
+<!-- ======================
+     GESTIÓN DE JUEGOS
+====================== -->
+<section class="card">
+  <h2>🎮 Gestión de Juegos</h2>
+
+  <p class="muted">
+    Activá o desactivá juegos disponibles en la plataforma
+  </p>
+
+  <ul id="admin-games" class="admin-games"></ul>
+
+  <button class="btn secondary" onclick="resetJuegosAdmin()">
+    Resetear juegos por defecto
+  </button>
+</section>
+
 
   <!-- ======================
        JUEGOS
@@ -118,6 +199,7 @@
     </button>
   </section>
 
+
   <!-- ======================
        REFERIDOS
   ======================= -->
@@ -125,6 +207,9 @@
     <h2>🧲 Top Referidos</h2>
     <ul id="admin-referidos"></ul>
   </section>
+
+
+  
 
 </main>
 

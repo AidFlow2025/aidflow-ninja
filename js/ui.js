@@ -474,6 +474,115 @@ function cargarDuelosUsuario() {
   btn.style.display = "inline-block";
 }
 
+
+document.addEventListener("DOMContentLoaded", () => {
+  const user = localStorage.getItem("aidflow_user");
+
+  if (user) {
+    const saludo = document.getElementById("saludo-ninja");
+    if (saludo) saludo.textContent = `🥷 ${user}`;
+
+    const saldo =
+      Number(localStorage.getItem("aidflow_saldo_" + user)) || 0;
+    const saldoEl = document.getElementById("saldo-usuario");
+    if (saldoEl) saldoEl.textContent = `$${saldo.toFixed(2)}`;
+
+    const refs =
+      Number(localStorage.getItem("aidflow_refs_" + user)) || 0;
+    const refEl = document.getElementById("total-referidos");
+    if (refEl) refEl.textContent = refs;
+
+    const link = `${window.location.origin}/register.html?ref=${user}`;
+    const linkInput = document.getElementById("link-referido");
+    if (linkInput) linkInput.value = link;
+  }
+});
+
+function copiarReferido() {
+  const input = document.getElementById("link-referido");
+  input.select();
+  document.execCommand("copy");
+  alert("Enlace copiado 🥷");
+}
+
+
+/* ======================
+   JUEGOS (USUARIO)
+====================== */
+
+function cargarJuegosUsuario() {
+  const contenedor = document.getElementById("user-games");
+  if (!contenedor) return;
+
+  const juegos =
+    JSON.parse(localStorage.getItem("aidflow_games")) || [];
+
+  const activos = juegos.filter(j => j.activo);
+
+  if (activos.length === 0) {
+    contenedor.innerHTML =
+      "<p class='muted'>⚠️ No hay juegos activos por el momento</p>";
+    return;
+  }
+
+  contenedor.innerHTML = "";
+
+  activos.forEach(juego => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h3>🥷 ${juego.nombre}</h3>
+      <p class="muted">Modo: ${juego.tipo}</p>
+      <a class="btn primary" href="${juego.url}">
+        Entrar al juego
+      </a>
+    `;
+    contenedor.appendChild(card);
+  });
+}
+
+
+function cargarEmbedsUsuario() {
+  const cont = document.getElementById("embed-games");
+  if (!cont) return;
+
+  const juegos =
+    JSON.parse(localStorage.getItem("aidflow_games")) || [];
+
+  const embeds = juegos.filter(
+    j => j.tipo === "embed" && j.activo
+  );
+
+  if (embeds.length === 0) {
+    cont.innerHTML =
+      "<p class='muted'>No hay juegos embebidos activos</p>";
+    return;
+  }
+
+  cont.innerHTML = "";
+
+  embeds.forEach(j => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <h3>${j.nombre}</h3>
+      <iframe
+        src="${j.url}"
+        width="100%"
+        height="420"
+        style="border-radius:12px;border:1px solid #333;"
+        loading="lazy">
+      </iframe>
+    `;
+    cont.appendChild(div);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", cargarEmbedsUsuario);
+
+document.addEventListener("DOMContentLoaded", cargarJuegosUsuario);
+
+
 document.addEventListener("DOMContentLoaded", cargarDuelosUsuario);
 
 document.addEventListener("DOMContentLoaded", cargarJuegosUsuario);
