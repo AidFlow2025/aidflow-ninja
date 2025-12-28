@@ -1,46 +1,57 @@
 /* ==========================
+   AUTH CENTRAL — AIDFLOW
+   Cerebro de autenticación
+   Actualizado: 2025-12-28
+   Admin: KarlitoxRey
+========================== */
+
+/* ==========================
    LOGIN
 ========================== */
 function login() {
   const user = document.getElementById("user")?.value.trim();
   const pass = document.getElementById("pass")?.value;
+  const errorEl = document.getElementById("login-error");
 
   if (!user || !pass) {
-    mostrarError("Completa usuario y contraseña");
+    errorEl.textContent = "Completá usuario y contraseña";
     return;
   }
 
-  const savedPass = localStorage.getItem("aidflow_pass_" + user);
-
-  if (!savedPass || savedPass !== pass) {
-    mostrarError("Usuario o contraseña incorrectos");
+  const raw = localStorage.getItem("aidflow_user_" + user);
+  if (!raw) {
+    errorEl.textContent = "Usuario o contraseña incorrectos";
     return;
   }
 
-  // SESIÓN ACTIVA
-  localStorage.setItem("aidflow_user", user);
+  const data = JSON.parse(raw);
+
+  if (data.pass !== pass) {
+    errorEl.textContent = "Usuario o contraseña incorrectos";
+    return;
+  }
+
+  /* SESIÓN */
   localStorage.setItem("aidflow_auth", "true");
+  localStorage.setItem("aidflow_user", user);
 
-  mostrarError("");
+  /* ROL */
+  if (user === "ZevlaSaitam") {
+    localStorage.setItem("aidflow_role", "admin");
+  } else {
+    localStorage.setItem("aidflow_role", "user");
+  }
 
   window.location.href = "/dashboard/index.html";
-}
-
-/* ==========================
-   ERRORES
-========================== */
-function mostrarError(msg) {
-  const el = document.getElementById("login-error");
-  if (el) el.textContent = msg;
 }
 
 /* ==========================
    LOGOUT
 ========================== */
 function logout() {
-  localStorage.removeItem("aidflow_user");
   localStorage.removeItem("aidflow_auth");
-
+  localStorage.removeItem("aidflow_user");
+  localStorage.removeItem("aidflow_role");
   window.location.href = "/login.html";
 }
 
@@ -48,8 +59,8 @@ function logout() {
    PROTEGER RUTAS
 ========================== */
 function protegerRuta() {
-  const user = localStorage.getItem("aidflow_user");
   const auth = localStorage.getItem("aidflow_auth");
+  const user = localStorage.getItem("aidflow_user");
 
   if (auth !== "true" || !user) {
     window.location.href = "/login.html";
@@ -57,7 +68,7 @@ function protegerRuta() {
 }
 
 /* ==========================
-   BLOQUEAR LOGIN SI YA ESTÁ LOGUEADO
+   BLOQUEAR LOGIN
 ========================== */
 function bloquearLoginSiAutenticado() {
   const auth = localStorage.getItem("aidflow_auth");
@@ -65,5 +76,17 @@ function bloquearLoginSiAutenticado() {
 
   if (auth === "true" && user) {
     window.location.href = "/dashboard/index.html";
+  }
+}
+
+/* ==========================
+   SOLO ADMIN
+========================== */
+function protegerAdmin() {
+  const auth = localStorage.getItem("aidflow_auth");
+  const role = localStorage.getItem("aidflow_role");
+
+  if (auth !== "true" || role !== "admin") {
+    window.location.href = "/login.html";
   }
 }

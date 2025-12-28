@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Login – AidFlow Ninja</title>
+  <title>Login — AidFlow Ninja</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/main.css">
 </head>
@@ -10,10 +10,8 @@
 <body>
 
 <main class="container admin-login">
-
   <h1>🥷 Acceso Ninja</h1>
 
-  <!-- FORMULARIO (evita warning del navegador) -->
   <form onsubmit="event.preventDefault(); login();">
 
     <input
@@ -31,7 +29,7 @@
     >
 
     <button type="submit" class="btn primary">
-      Entrar
+      Entrar al Dojo
     </button>
 
   </form>
@@ -42,32 +40,16 @@
     ¿Todavía no sos Ninja?
     <a href="register.html">Crear cuenta</a>
   </p>
-
 </main>
 
-<!-- ================= FOOTER ================= -->
 <footer class="footer">
   <p>© 2025 AidFlow Ninja</p>
   <p>Ayuda mutua · Mérito · Transparencia</p>
-  <a href="privacidad.html" target="_blank">Política de Privacidad</a>
 </footer>
 
-<!-- ================= SCRIPTS ================= -->
-
-<!-- 1️⃣ auth.js PRIMERO -->
 <script src="js/auth.js"></script>
-
-<!-- 2️⃣ recién ahora podemos usar sus funciones -->
 <script>
   bloquearLoginSiAutenticado();
-
-  // guardar referido si viene por URL
-  const params = new URLSearchParams(window.location.search);
-  const ref = params.get("ref");
-
-  if (ref && !localStorage.getItem("aidflow_ref_origen")) {
-    localStorage.setItem("aidflow_ref_origen", ref);
-  }
 </script>
 
 </body>

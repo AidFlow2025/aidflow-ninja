@@ -1,187 +1,98 @@
-﻿function logoutAdmin() {
-  localStorage.removeItem("aidflow_admin_auth");
-  window.location.href = "index.html";
-}
+﻿/* =========================================================
+   AIDFLOW NINJA — ADMIN CORE (CEREBRO DEL SISTEMA)
+   Este archivo controla TODA la lógica interna del admin:
+   DAO, torneos, juegos, sistema, referidos y estados.
+   
+   ⚠️ NO maneja autenticación ni login.
+   ⚠️ auth.js es el único responsable de seguridad.
+
+   Última actualización: 2025-12-22
+========================================================= */
 
 
-// Admin logic placeholder
-console.log("Admin panel loaded");
-const ADMIN_PASSWORD = "ninja123"; // cambiala cuando quieras
+/* =========================================================
+   🚫 AUTH (DESACTIVADO — SOLO REFERENCIA)
+   MOVIDO A: admin/auth.js
+========================================================= */
+
+/*
 function loginAdmin() {
-  const pass = document.getElementById("admin-pass").value;
-  const error = document.getElementById("error-admin");
-
-  if (pass === ADMIN_PASSWORD) {
-    localStorage.setItem("aidflow_admin_auth", "true");
-    window.location.href = "dashboard.html";
-  } else {
-    error.textContent = "❌ Clave incorrecta";
-  }
+  ...
 }
 
+function logoutAdmin() {
+  ...
+}
+*/
 
 
-/*************************
- * CARGA INICIAL
- *************************/
+/* =========================================================
+   CARGA INICIAL — ESTADO GENERAL
+========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("admin-usuarios").value =
-    localStorage.getItem("aidflow_usuarios_activos") || 0;
+  const u = document.getElementById("admin-usuarios");
+  const d = document.getElementById("admin-dao");
+  const p = document.getElementById("admin-pozo");
 
-  document.getElementById("admin-dao").value =
-    localStorage.getItem("aidflow_dao_fondo") || 0;
-
-  document.getElementById("admin-pozo").value =
-    localStorage.getItem("aidflow_torneo_pozo") || 100;
+  if (u) u.value = localStorage.getItem("aidflow_usuarios_activos") || 0;
+  if (d) d.value = localStorage.getItem("aidflow_dao_fondo") || 0;
+  if (p) p.value = localStorage.getItem("aidflow_torneo_pozo") || 100;
 
   actualizarEstado();
 });
 
-/*************************
- * GUARDAR USUARIOS
- *************************/
+
+/* =========================================================
+   SISTEMA GENERAL
+========================================================= */
+
 function guardarUsuariosActivos() {
-  const val = parseInt(
-    document.getElementById("admin-usuarios").value
-  );
+  const val = Number(document.getElementById("admin-usuarios").value || 0);
   localStorage.setItem("aidflow_usuarios_activos", val);
   actualizarEstado();
 }
 
-/*************************
- * GUARDAR DAO
- *************************/
 function guardarDAOFondos() {
-  const val = parseFloat(
-    document.getElementById("admin-dao").value
-  );
+  const val = Number(document.getElementById("admin-dao").value || 0);
   localStorage.setItem("aidflow_dao_fondo", val);
   actualizarEstado();
 }
 
-/*************************
- * GUARDAR POZO TORNEO
- *************************/
 function guardarPozoTorneo() {
-  const val = parseFloat(
-    document.getElementById("admin-pozo").value
-  );
+  const val = Number(document.getElementById("admin-pozo").value || 0);
   localStorage.setItem("aidflow_torneo_pozo", val);
   actualizarEstado();
 }
 
-/*************************
- * ESTADO GENERAL
- *************************/
 function actualizarEstado() {
-  const usuarios =
-    localStorage.getItem("aidflow_usuarios_activos") || 0;
+  const usuarios = Number(
+    localStorage.getItem("aidflow_usuarios_activos") || 0
+  );
 
   const estado = document.getElementById("estado-sistema");
+  if (!estado) return;
 
-  if (usuarios >= 100) {
-    estado.textContent =
-      "✅ Torneos ACTIVOS — Premios en dinero real";
-  } else {
-    estado.textContent =
-      `🔒 Torneos bloqueados (${usuarios}/100 usuarios)`;
-  }
-}
-/*************************
- * ADMIN PANEL
- *************************/
-
-function renderAdmin() {
-  const daoEl = document.getElementById("dao-fondo");
-  const usuariosEl = document.getElementById("usuarios-activos");
-  const pozoInput = document.getElementById("input-pozo");
-  const usuariosInput = document.getElementById("input-usuarios");
-
-  if (daoEl) daoEl.textContent = `$${DAO.fondo}`;
-  if (usuariosEl) usuariosEl.textContent = obtenerCantidadUsuarios();
-
-  if (pozoInput) pozoInput.value = TORNEO.pozo;
-  if (usuariosInput) usuariosInput.value = SISTEMA.usuariosMinimosTorneos;
+  estado.textContent =
+    usuarios >= 100
+      ? "✅ Torneos ACTIVOS — Premios en dinero real"
+      : `🔒 Torneos bloqueados (${usuarios}/100 usuarios)`;
 }
 
-function guardarConfigTorneo() {
-  TORNEO.pozo = Number(document.getElementById("input-pozo").value);
-  SISTEMA.usuariosMinimosTorneos = Number(
-    document.getElementById("input-usuarios").value
-  );
 
-  alert("Configuración guardada");
-}
+/* =========================================================
+   DAO / TORNEOS / SISTEMA (ADMIN PANEL)
+========================================================= */
 
-function simularUsuarios(cantidad) {
-  let actuales = obtenerCantidadUsuarios();
-  let nuevos = actuales + cantidad;
-
-  localStorage.setItem("aidflow_usuarios_activos", nuevos);
-  renderAdmin();
-}
-
-function resetDAO() {
-  DAO.fondo = 0;
-  guardarDAO();
-  renderAdmin();
-}
-
-function resetRanking() {
-  localStorage.removeItem("aidflow_ranking_duelos");
-  alert("Ranking reseteado");
-}
-
-function resetTodo() {
-  localStorage.clear();
-  location.reload();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  cargarDAO();
-  renderAdmin();
-});
-
-/*************************
- * CARGAR DATOS
- *************************/
-function cargarAdmin() {
-  const dao = JSON.parse(localStorage.getItem("aidflow_dao")) || { fondo: 0 };
-  const torneo = JSON.parse(localStorage.getItem("aidflow_torneo")) || {
-    pozo: 100,
-    ganadores: 20
-  };
-
-  const usuarios = Number(
-    localStorage.getItem("aidflow_usuarios_activos")
-  ) || 0;
-
-  document.getElementById("dao-fondo").value = dao.fondo;
-  document.getElementById("torneo-pozo").value = torneo.pozo;
-  document.getElementById("torneo-ganadores").value = torneo.ganadores;
-  document.getElementById("usuarios-activos").value = usuarios;
-}
-
-/*************************
- * GUARDAR DAO
- *************************/
 function guardarDAOAdmin() {
-  const fondo = Number(document.getElementById("dao-fondo").value);
-
-  localStorage.setItem(
-    "aidflow_dao",
-    JSON.stringify({ fondo })
-  );
-
+  const fondo = Number(document.getElementById("dao-fondo")?.value || 0);
+  localStorage.setItem("aidflow_dao", JSON.stringify({ fondo }));
   alert("✅ DAO actualizado");
 }
 
-/*************************
- * GUARDAR TORNEO
- *************************/
 function guardarTorneoAdmin() {
-  const pozo = Number(document.getElementById("torneo-pozo").value);
-  const ganadores = Number(document.getElementById("torneo-ganadores").value);
+  const pozo = Number(document.getElementById("torneo-pozo")?.value || 0);
+  const ganadores = Number(document.getElementById("torneo-ganadores")?.value || 0);
 
   localStorage.setItem(
     "aidflow_torneo",
@@ -191,166 +102,19 @@ function guardarTorneoAdmin() {
   alert("🏆 Torneo actualizado");
 }
 
-/*************************
- * GUARDAR SISTEMA
- *************************/
 function guardarSistemaAdmin() {
   const usuarios = Number(
-    document.getElementById("usuarios-activos").value
+    document.getElementById("usuarios-activos")?.value || 0
   );
 
-  localStorage.setItem(
-    "aidflow_usuarios_activos",
-    usuarios
-  );
-
+  localStorage.setItem("aidflow_usuarios_activos", usuarios);
   alert("👥 Usuarios activos actualizados");
 }
 
-document.addEventListener("DOMContentLoaded", cargarAdmin);
-  
 
-function cargarTopReferidosAdmin() {
-  const lista = document.getElementById("admin-referidos");
-  if (!lista) return;
-
-  lista.innerHTML = "";
-
-  const keys = Object.keys(localStorage)
-    .filter(k => k.startsWith("aidflow_refs_"));
-
-  const referidos = keys.map(k => {
-    const id = k.replace("aidflow_refs_", "");
-    const data = JSON.parse(localStorage.getItem(k));
-    return {
-      id,
-      total: data.total || 0,
-      ganancias: data.ganancias || 0
-    };
-  });
-
-  referidos.sort((a, b) => b.total - a.total);
-
-  referidos.slice(0, 10).forEach(r => {
-    const li = document.createElement("li");
-    li.textContent =
-      `${r.id} — ${r.total} referidos — $${r.ganancias.toFixed(2)}`;
-    lista.appendChild(li);
-  });
-}
-
-
-/* ========= LOGOUT ========= */
-function logoutAdmin() {
-  localStorage.removeItem("aidflow_admin_auth");
-  window.location.href = "index.html";
-}
-
-/* ========= DAO ========= */
-function guardarDAOAdmin() {
-  const dao = document.getElementById("dao-fondo").value;
-  localStorage.setItem("aidflow_dao", dao);
-  alert("DAO actualizado");
-}
-
-/* ========= TORNEOS ========= */
-function guardarTorneoAdmin() {
-  localStorage.setItem(
-    "aidflow_torneo",
-    JSON.stringify({
-      pozo: document.getElementById("torneo-pozo").value,
-      ganadores: document.getElementById("torneo-ganadores").value
-    })
-  );
-  alert("Torneo guardado");
-}
-
-/* ========= SISTEMA ========= */
-function guardarSistemaAdmin() {
-  localStorage.setItem(
-    "aidflow_usuarios_activos",
-    document.getElementById("usuarios-activos").value
-  );
-  alert("Sistema actualizado");
-}
-
-/* ========= JUEGOS ========= */
-function agregarJuego() {
-  const url = document.getElementById("juego-url").value;
-  if (!url) return;
-
-  const juegos =
-    JSON.parse(localStorage.getItem("aidflow_juegos")) || [];
-
-  juegos.push(url);
-
-  localStorage.setItem(
-    "aidflow_juegos",
-    JSON.stringify(juegos)
-  );
-
-  renderJuegos();
-}
-
-function renderJuegos() {
-  const ul = document.getElementById("lista-juegos");
-  ul.innerHTML = "";
-
-  const juegos =
-    JSON.parse(localStorage.getItem("aidflow_juegos")) || [];
-
-  juegos.forEach((url, i) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      ${url}
-      <button onclick="eliminarJuego(${i})">❌</button>
-    `;
-    ul.appendChild(li);
-  });
-}
-
-function eliminarJuego(i) {
-  const juegos =
-    JSON.parse(localStorage.getItem("aidflow_juegos")) || [];
-
-  juegos.splice(i, 1);
-
-  localStorage.setItem(
-    "aidflow_juegos",
-    JSON.stringify(juegos)
-  );
-
-  renderJuegos();
-}
-
-/* ========= REFERIDOS ========= */
-function cargarReferidosAdmin() {
-  const ul = document.getElementById("admin-referidos");
-  if (!ul) return;
-
-  ul.innerHTML = "";
-
-  Object.keys(localStorage)
-    .filter(k => k.startsWith("aidflow_refs_"))
-    .forEach(k => {
-      const user = k.replace("aidflow_refs_", "");
-      const total = localStorage.getItem(k);
-
-      const li = document.createElement("li");
-      li.textContent = `${user}: ${total}`;
-      ul.appendChild(li);
-    });
-}
-
-/* ========= INIT ========= */
-window.onload = () => {
-  renderJuegos();
-  cargarReferidosAdmin();
-
-  document.getElementById("dao-fondo").value =
-    localStorage.getItem("aidflow_dao") || 0;
-};
-
+/* =========================================================
+   REFERIDOS (TOP)
+========================================================= */
 
 function cargarReferidosAdmin() {
   const lista = document.getElementById("admin-referidos");
@@ -366,7 +130,7 @@ function cargarReferidosAdmin() {
     }))
     .sort((a, b) => b.refs - a.refs);
 
-  if (datos.length === 0) {
+  if (!datos.length) {
     lista.innerHTML = "<li>Sin referidos aún</li>";
     return;
   }
@@ -378,113 +142,10 @@ function cargarReferidosAdmin() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  cargarReferidosAdmin();
 
-  const dao = localStorage.getItem("aidflow_dao") || 0;
-  const inputDAO = document.getElementById("dao-fondo");
-  if (inputDAO) inputDAO.value = dao;
-});
-
-function obtenerJuegos() {
-  const base = {
-    survival: {
-      name: "Survival Ninja",
-      enabled: true,
-      type: "torneo"
-    },
-    duelos: {
-      name: "Duelos Ninja 1v1",
-      enabled: false,
-      type: "duelo"
-    },
-    training: {
-      name: "Modo Entrenamiento",
-      enabled: true,
-      type: "free"
-    }
-  };
-
-  return (
-    JSON.parse(localStorage.getItem("aidflow_games")) || base
-  );
-}
-
-function guardarJuegos(juegos) {
-  localStorage.setItem("aidflow_games", JSON.stringify(juegos));
-}
-
-function renderAdminJuegos() {
-  const ul = document.getElementById("admin-games");
-  if (!ul) return;
-
-  const juegos = obtenerJuegos();
-  ul.innerHTML = "";
-
-  Object.keys(juegos).forEach(key => {
-    const j = juegos[key];
-
-    const li = document.createElement("li");
-
-    li.innerHTML = `
-      <div>
-        <span>${j.name}</span><br>
-        <small>Tipo: ${j.type}</small>
-      </div>
-      <label class="toggle-btn">
-        <input type="checkbox" ${
-          j.enabled ? "checked" : ""
-        } onchange="toggleJuego('${key}')">
-        ${j.enabled ? "Activo" : "Inactivo"}
-      </label>
-    `;
-
-    ul.appendChild(li);
-  });
-}
-
-function toggleJuego(id) {
-  const juegos = obtenerJuegos();
-  juegos[id].enabled = !juegos[id].enabled;
-  guardarJuegos(juegos);
-  renderAdminJuegos();
-}
-
-function resetJuegosAdmin() {
-  localStorage.removeItem("aidflow_games");
-  renderAdminJuegos();
-}
-
-document.addEventListener("DOMContentLoaded", renderAdminJuegos);
-
-
-
-function cargarFondosAdmin() {
-  const dao =
-    Number(localStorage.getItem("aidflow_dao")) || 0;
-  const admin =
-    Number(localStorage.getItem("aidflow_admin_fondo")) || 0;
-  const mant =
-    Number(localStorage.getItem("aidflow_mantenimiento")) || 0;
-
-  const total = dao + admin + mant;
-
-  if (document.getElementById("admin-dao"))
-    document.getElementById("admin-dao").textContent = "$" + dao;
-
-  if (document.getElementById("admin-admin"))
-    document.getElementById("admin-admin").textContent = "$" + admin;
-
-  if (document.getElementById("admin-mant"))
-    document.getElementById("admin-mant").textContent = "$" + mant;
-
-  if (document.getElementById("admin-total"))
-    document.getElementById("admin-total").textContent = "$" + total;
-}
-
-/* ======================
+/* =========================================================
    JUEGOS (ADMIN)
-====================== */
+========================================================= */
 
 const juegosDefault = [
   {
@@ -507,8 +168,8 @@ function cargarJuegosAdmin() {
   let juegos = JSON.parse(localStorage.getItem("aidflow_games"));
 
   if (!juegos) {
-    localStorage.setItem("aidflow_games", JSON.stringify(juegosDefault));
     juegos = juegosDefault;
+    localStorage.setItem("aidflow_games", JSON.stringify(juegos));
   }
 
   const lista = document.getElementById("admin-games-list");
@@ -516,14 +177,14 @@ function cargarJuegosAdmin() {
 
   lista.innerHTML = "";
 
-  juegos.forEach((juego, index) => {
+  juegos.forEach((j, i) => {
     const li = document.createElement("li");
     li.innerHTML = `
-      <strong>${juego.nombre}</strong>
-      <span class="badge">${juego.tipo}</span>
-      <label style="margin-left:10px;">
-        <input type="checkbox" ${juego.activo ? "checked" : ""}
-          onchange="toggleJuego(${index})">
+      <strong>${j.nombre}</strong>
+      <span class="badge">${j.tipo}</span>
+      <label>
+        <input type="checkbox" ${j.activo ? "checked" : ""}
+          onchange="toggleJuego(${i})">
         Activo
       </label>
     `;
@@ -531,9 +192,9 @@ function cargarJuegosAdmin() {
   });
 }
 
-function toggleJuego(index) {
-  const juegos = JSON.parse(localStorage.getItem("aidflow_games"));
-  juegos[index].activo = !juegos[index].activo;
+function toggleJuego(i) {
+  const juegos = JSON.parse(localStorage.getItem("aidflow_games")) || [];
+  juegos[i].activo = !juegos[i].activo;
   localStorage.setItem("aidflow_games", JSON.stringify(juegos));
   cargarJuegosAdmin();
 }
@@ -542,73 +203,14 @@ function resetearJuegos() {
   localStorage.setItem("aidflow_games", JSON.stringify(juegosDefault));
   cargarJuegosAdmin();
 }
-/* ======================
-   JUEGOS EMBED (ADMIN)
-====================== */
 
-function agregarJuegoEmbed() {
-  const nombre = document.getElementById("embed-nombre").value.trim();
-  const url = document.getElementById("embed-url").value.trim();
 
-  if (!nombre || !url) {
-    alert("Completa nombre y URL");
-    return;
-  }
+/* =========================================================
+   INIT FINAL
+========================================================= */
 
-  const juegos =
-    JSON.parse(localStorage.getItem("aidflow_games")) || [];
-
-  juegos.push({
-    id: "embed-" + Date.now(),
-    nombre,
-    url,
-    tipo: "embed",
-    activo: true
-  });
-
-  localStorage.setItem("aidflow_games", JSON.stringify(juegos));
-
-  document.getElementById("embed-nombre").value = "";
-  document.getElementById("embed-url").value = "";
-
+document.addEventListener("DOMContentLoaded", () => {
   cargarJuegosAdmin();
-  cargarEmbedsAdmin();
-}
-
-function cargarEmbedsAdmin() {
-  const lista = document.getElementById("admin-embed-list");
-  if (!lista) return;
-
-  const juegos =
-    JSON.parse(localStorage.getItem("aidflow_games")) || [];
-
-  lista.innerHTML = "";
-
-  juegos
-    .filter(j => j.tipo === "embed")
-    .forEach((j, i) => {
-      const li = document.createElement("li");
-      li.innerHTML = `
-        ${j.nombre}
-        <button onclick="eliminarJuego(${i})">❌</button>
-      `;
-      lista.appendChild(li);
-    });
-}
-
-function eliminarJuego(index) {
-  const juegos =
-    JSON.parse(localStorage.getItem("aidflow_games")) || [];
-
-  juegos.splice(index, 1);
-  localStorage.setItem("aidflow_games", JSON.stringify(juegos));
-
-  cargarJuegosAdmin();
-  cargarEmbedsAdmin();
-}
-
-document.addEventListener("DOMContentLoaded", cargarEmbedsAdmin);
-
-document.addEventListener("DOMContentLoaded", cargarJuegosAdmin);
-
-document.addEventListener("DOMContentLoaded", cargarFondosAdmin);
+  cargarReferidosAdmin();
+  cargarFondosAdmin?.();
+});

@@ -1,74 +1,30 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Admin — AidFlow Ninja</title>
+  <title>Admin Login — AidFlow Ninja</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../css/main.css">
 </head>
+
 <body>
-<h1>Admin — AidFlow Ninja</h1>
 
-<input
-  type="password"
-  id="admin-pass"
-  placeholder="Clave admin"
-/>
+<main class="container admin-login">
+  <h1>🛠️ Acceso Administrador</h1>
 
-<button onclick="loginAdmin()">Entrar</button>
+  <input
+    type="password"
+    id="admin-pass"
+    placeholder="Clave admin"
+  >
 
-<p id="error-admin" style="color:red;"></p>
+  <button class="btn primary" onclick="loginAdmin()">
+    Entrar
+  </button>
 
-<script src="../js/admin.js"></script>
-
-<main class="container">
-  <h1>🛠️ Panel Administrador</h1>
-
-  <section class="card">
-    <h2>💰 Fondo DAO</h2>
-    <p id="dao-fondo">$0</p>
-    <button onclick="resetDAO()">Resetear DAO</button>
-  </section>
-
-  <section class="card">
-    <h2>🏆 Configuración Torneos</h2>
-
-    <label>
-      Pozo del torneo ($):
-      <input type="number" id="input-pozo" />
-    </label>
-
-    <label>
-      Usuarios mínimos:
-      <input type="number" id="input-usuarios" />
-    </label>
-
-    <button onclick="guardarConfigTorneo()">Guardar cambios</button>
-  </section>
-
-  <section class="card">
-    <h2>👥 Usuarios Activos (simulado)</h2>
-    <p id="usuarios-activos"></p>
-
-    <button onclick="simularUsuarios(10)">+10 usuarios</button>
-    <button onclick="simularUsuarios(50)">+50 usuarios</button>
-  </section>
-
-  <section class="card">
-    <h2>♻️ Sistema</h2>
-    <button onclick="resetRanking()">Resetear Ranking</button>
-    <button onclick="resetTodo()">Resetear TODO</button>
-  </section>
-
-
-  
+  <p id="error-admin" class="error"></p>
 </main>
-<script src="../js/auth.js"></script>
-<script>
-  protegerRuta("admin");
-</script>
 
-<script src="../js/economia.js"></script>
-<script src="../js/admin.js"></script>
+<script src="admin.js"></script>
 </body>
 </html>

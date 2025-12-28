@@ -9,35 +9,42 @@
 
 <body>
 
-<main class="container">
+<main class="container admin-login">
   <h1>🥷 Registro Ninja</h1>
 
-  <input
-    id="user"
-    placeholder="Usuario ninja"
-    autocomplete="username"
-  >
+  <form onsubmit="event.preventDefault(); registrar();">
 
-  <input
-    id="pass"
-    type="password"
-    placeholder="Contraseña"
-    autocomplete="new-password"
-  >
+    <input
+      id="user"
+      placeholder="Usuario Ninja"
+      autocomplete="username"
+    >
 
-  <label class="terminos-check">
-    <input type="checkbox" id="terminos">
-    Acepto los
-    <a href="terminos.html" target="_blank">
-      Términos y Condiciones
-    </a>
-  </label>
+    <input
+      id="pass"
+      type="password"
+      placeholder="Contraseña"
+      autocomplete="new-password"
+    >
 
-  <button class="btn primary" onclick="registrar()">
-    Entrar al Clan
-  </button>
+    <label class="terminos-check">
+      <input type="checkbox" id="terminos">
+      Acepto los
+      <a href="terminos.html" target="_blank">Términos y Condiciones</a>
+    </label>
 
-  <p id="msg" class="error"></p>
+    <button class="btn primary" type="submit">
+      Entrar al Clan
+    </button>
+
+  </form>
+
+  <p id="msg" style="color:#ef4444; margin-top:10px;"></p>
+
+  <p style="margin-top:20px; opacity:.7;">
+    ¿Ya sos Ninja?
+    <a href="login.html">Iniciar sesión</a>
+  </p>
 </main>
 
 <script>
@@ -45,114 +52,48 @@ function registrar() {
   const user = document.getElementById("user").value.trim();
   const pass = document.getElementById("pass").value;
   const acepta = document.getElementById("terminos").checked;
+  const msgEl = document.getElementById("msg");
 
   if (!user || !pass) {
-    return msg("Completá usuario y contraseña");
+    msgEl.textContent = "Completá usuario y contraseña";
+    return;
   }
 
   if (!acepta) {
-    return msg("Debés aceptar los términos");
+    msgEl.textContent = "Debés aceptar los términos";
+    return;
   }
 
-  // 🚫 evitar duplicados
-  if (
-    localStorage.getItem("aidflow_user_" + user) ||
-    localStorage.getItem("aidflow_pass_" + user)
-  ) {
-    return msg("Este usuario ya existe");
+  const key = "aidflow_user_" + user;
+
+  if (localStorage.getItem(key)) {
+    msgEl.textContent = "Este usuario ya existe";
+    return;
   }
 
+  /* REFERIDO */
   const params = new URLSearchParams(window.location.search);
   const referidoPor = params.get("ref");
 
-  // 🧠 ESTRUCTURA BASE DEL USUARIO
+  /* USUARIO BASE */
   const userData = {
-    user: user,
+    user,
+    pass,
     nivel: 1,
     saldo: 0,
-    ciclosCompletados: 0,
-    pagoActivo: false,
+    referidos: 0,
     referidoPor: referidoPor || null,
-    fechaAlta: new Date().toISOString()
+    creado: Date.now()
   };
 
-  // ======================
-  // GUARDADO PRINCIPAL
-  // ======================
+  localStorage.setItem(key, JSON.stringify(userData));
 
-  // objeto usuario
-  localStorage.setItem(
-    "aidflow_user_" + user,
-    JSON.stringify(userData)
-  );
+  msgEl.style.color = "#22c55e";
+  msgEl.textContent = "✅ Registro exitoso. Ahora iniciá sesión.";
 
-  // compatibilidad con login actual
-  localStorage.setItem("aidflow_pass_" + user, pass);
-  localStorage.setItem("aidflow_user", user);
-  localStorage.setItem("aidflow_auth", "true");
-
-  // ======================
-  // REFERIDOS
-  // ======================
-  if (referidoPor) {
-    registrarReferido(referidoPor);
-  }
-
-  // 👉 redirigir a pago simulado
-  window.location.href = "pago.html";
-}
-
-/* ======================
-   REFERIDOS + DAO
-====================== */
-
-function registrarReferido(ref) {
-  const refs =
-    Number(localStorage.getItem("aidflow_refs_" + ref)) || 0;
-
-  localStorage.setItem(
-    "aidflow_refs_" + ref,
-    refs + 1
-  );
-
-  procesarPagoInicial(ref);
-}
-
-function procesarPagoInicial(ref) {
-  const pago = 10;
-
-  const refData =
-    JSON.parse(localStorage.getItem("aidflow_user_" + ref));
-
-  if (!refData) return;
-
-  let porcentaje = 0.4;
-  if (refData.nivel === 2) porcentaje = 0.45;
-  if (refData.nivel >= 3) porcentaje = 0.5;
-
-  const refGanancia = pago * porcentaje;
-  const daoGanancia = pago * 0.2;
-
-  // sumar al referido
-  refData.saldo += refGanancia;
-
-  localStorage.setItem(
-    "aidflow_user_" + ref,
-    JSON.stringify(refData)
-  );
-
-  // sumar al DAO
-  const dao =
-    Number(localStorage.getItem("aidflow_dao")) || 0;
-
-  localStorage.setItem(
-    "aidflow_dao",
-    dao + daoGanancia
-  );
-}
-
-function msg(texto) {
-  document.getElementById("msg").textContent = texto;
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 1200);
 }
 </script>
 

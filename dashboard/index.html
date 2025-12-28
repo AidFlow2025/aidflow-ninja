@@ -1,98 +1,110 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard Ninja — AidFlow Ninja</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../css/main.css" />
+  <meta charset="UTF-8">
+  <title>Panel Ninja — AidFlow Ninja</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 
 <body>
 
-<!-- ======================
-     PROTECCIÓN DE RUTA
-====================== -->
-<script src="../js/auth.js"></script>
-<script>
-  protegerRuta();
-</script>
+<div class="dashboard">
 
-<!-- ======================
-     HEADER
-====================== -->
-<header class="dashboard-header">
-  <div>
-    <h1>🥷 Panel del Ninja</h1>
-    <p class="muted" id="ninja-nombre"></p>
-  </div>
+  <!-- HEADER -->
+  <header class="dash-header">
+    <div class="ninja-info">
+      🥷 <strong id="ninja-name">Ninja</strong>
+      <span class="nivel">Nivel <span id="ninja-level">1</span></span>
+    </div>
 
-  <button class="btn secondary" onclick="logout()">
-    Cerrar sesión
-  </button>
-</header>
+    <button class="logout" onclick="logout()">⎋ Salir</button>
+  </header>
 
-<main class="container dashboard-container">
+  <!-- STATS -->
+  <section class="stats">
+    <div class="card">
+      <span>💰 Saldo</span>
+      <strong>$<span id="saldo">0</span></strong>
+    </div>
 
-  <!-- WALLET -->
-  <section class="card">
-    <h2>💰 Wallet Ninja</h2>
-    <p>
-      Saldo disponible:
-      <strong>$<span id="wallet-saldo">0.00</span></strong>
-    </p>
-    <button class="btn primary" onclick="sumarSaldo(10)">
-      ➕ Simular ingreso $10
-    </button>
+    <div class="card">
+      <span>🔗 Referidos</span>
+      <strong><span id="refs">0</span></strong>
+    </div>
+
+    <div class="card">
+      <span>⚔️ Estado</span>
+      <strong id="estado">Activo</strong>
+    </div>
   </section>
 
-  <!-- REFERIDOS -->
-  <section class="card">
-    <h2>🧲 Referidos</h2>
-    <p>
-      Tus referidos:
-      <strong id="mis-referidos">0</strong>
-    </p>
-    <p class="muted">Compartí este enlace:</p>
-    <input type="text" id="link-referido" readonly onclick="this.select()" />
+  <!-- PROGRESO -->
+  <section class="progress-box">
+    <p>Progreso del ciclo</p>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <small><span id="progress-text">0%</span> completado</small>
   </section>
 
-  <!-- DOJO -->
-  <section class="card">
-    <h2>🎮 Dojo Ninja</h2>
-    <p class="muted">Juegos de entrenamiento y torneos</p>
-    <button class="btn primary" onclick="abrirDojo()">
-      Entrar al Dojo
-    </button>
-    <div id="zona-juego" style="margin-top:20px;"></div>
+  <!-- ACCIONES -->
+  <section class="actions">
+    <button class="btn primary">🎮 Jugar Torneo</button>
+    <button class="btn secondary">🤝 Invitar Ninja</button>
+    <button class="btn ghost">💳 Activar Pago</button>
   </section>
 
-</main>
+  <!-- LOG -->
+  <section class="log">
+    <h3>📜 Actividad reciente</h3>
+    <ul id="activity-log">
+      <li>Bienvenido al Dojo Ninja</li>
+    </ul>
+  </section>
 
-<footer class="footer">
-  <p>© 2025 AidFlow Ninja</p>
-  <p>Ayuda mutua · Mérito · Transparencia</p>
-</footer>
-
-<!-- ======================
-     SCRIPTS
-====================== -->
-<script src="../js/wallet.js"></script>
-<script src="../js/economia.js"></script>
-<script src="../js/dojo.js"></script>
+</div>
 
 <script>
-  const user = localStorage.getItem("aidflow_user");
+/* ======================
+   DATOS DEL USUARIO
+====================== */
+const user = localStorage.getItem("aidflow_user_activo");
 
-  document.getElementById("ninja-nombre").textContent =
-    "Bienvenido, " + user;
+if (!user) {
+  window.location.href = "../login.html";
+}
 
-  const refs =
-    Number(localStorage.getItem("aidflow_refs_" + user)) || 0;
-  document.getElementById("mis-referidos").textContent = refs;
+const data =
+  JSON.parse(localStorage.getItem("aidflow_user_" + user));
 
-  document.getElementById("link-referido").value =
-    window.location.origin + "/register.html?ref=" + user;
+document.getElementById("ninja-name").textContent = user;
+document.getElementById("ninja-level").textContent = data.nivel;
+document.getElementById("saldo").textContent = data.saldo.toFixed(2);
+
+const refs =
+  Number(localStorage.getItem("aidflow_refs_" + user)) || 0;
+document.getElementById("refs").textContent = refs;
+
+/* PROGRESO SIMULADO */
+const progreso = Math.min(refs * 20, 100);
+document.getElementById("progress-fill").style.width = progreso + "%";
+document.getElementById("progress-text").textContent = progreso;
+
+/* LOG SIMPLE */
+const log = document.getElementById("activity-log");
+if (refs > 0) {
+  log.innerHTML += `<li>+${refs} referidos activos</li>`;
+}
+
+function logout() {
+  localStorage.removeItem("aidflow_user_activo");
+  window.location.href = "../index.html";
+}
 </script>
+<script src="/js/auth.js"></script>
+<script>protegerRuta();</script>
 
 </body>
 </html>
