@@ -12,12 +12,25 @@
 <main class="container">
   <h1>🥷 Registro Ninja</h1>
 
-  <input id="user" placeholder="Usuario ninja">
-  <input id="pass" type="password" placeholder="Contraseña">
+  <input
+    id="user"
+    placeholder="Usuario ninja"
+    autocomplete="username"
+  >
+
+  <input
+    id="pass"
+    type="password"
+    placeholder="Contraseña"
+    autocomplete="new-password"
+  >
 
   <label class="terminos-check">
     <input type="checkbox" id="terminos">
-    Acepto los <a href="terminos.html" target="_blank">Términos y Condiciones</a>
+    Acepto los
+    <a href="terminos.html" target="_blank">
+      Términos y Condiciones
+    </a>
   </label>
 
   <button class="btn primary" onclick="registrar()">
@@ -41,46 +54,57 @@ function registrar() {
     return msg("Debés aceptar los términos");
   }
 
-  // evitar sobreescribir usuarios
-  if (localStorage.getItem("aidflow_user_" + user)) {
+  // 🚫 evitar duplicados
+  if (
+    localStorage.getItem("aidflow_user_" + user) ||
+    localStorage.getItem("aidflow_pass_" + user)
+  ) {
     return msg("Este usuario ya existe");
   }
 
   const params = new URLSearchParams(window.location.search);
   const referidoPor = params.get("ref");
 
-  // OBJETO USUARIO (estructura correcta)
+  // 🧠 ESTRUCTURA BASE DEL USUARIO
   const userData = {
-    user,
-    pass,
+    user: user,
     nivel: 1,
     saldo: 0,
-    pago: false,
+    ciclosCompletados: 0,
+    pagoActivo: false,
     referidoPor: referidoPor || null,
-    referidos: 0
+    fechaAlta: new Date().toISOString()
   };
 
-  // guardar usuario
+  // ======================
+  // GUARDADO PRINCIPAL
+  // ======================
+
+  // objeto usuario
   localStorage.setItem(
     "aidflow_user_" + user,
     JSON.stringify(userData)
   );
 
-  // usuario activo
-  localStorage.setItem("aidflow_user_activo", user);
+  // compatibilidad con login actual
+  localStorage.setItem("aidflow_pass_" + user, pass);
+  localStorage.setItem("aidflow_user", user);
+  localStorage.setItem("aidflow_auth", "true");
 
+  // ======================
   // REFERIDOS
+  // ======================
   if (referidoPor) {
     registrarReferido(referidoPor);
   }
 
-  // ir a pago simulado
+  // 👉 redirigir a pago simulado
   window.location.href = "pago.html";
 }
 
-/* =====================
+/* ======================
    REFERIDOS + DAO
-===================== */
+====================== */
 
 function registrarReferido(ref) {
   const refs =
@@ -106,18 +130,25 @@ function procesarPagoInicial(ref) {
   if (refData.nivel === 2) porcentaje = 0.45;
   if (refData.nivel >= 3) porcentaje = 0.5;
 
-  const refGain = pago * porcentaje;
-  const daoGain = pago * 0.2;
+  const refGanancia = pago * porcentaje;
+  const daoGanancia = pago * 0.2;
 
-  refData.saldo += refGain;
+  // sumar al referido
+  refData.saldo += refGanancia;
 
   localStorage.setItem(
     "aidflow_user_" + ref,
     JSON.stringify(refData)
   );
 
-  const dao = Number(localStorage.getItem("aidflow_dao")) || 0;
-  localStorage.setItem("aidflow_dao", dao + daoGain);
+  // sumar al DAO
+  const dao =
+    Number(localStorage.getItem("aidflow_dao")) || 0;
+
+  localStorage.setItem(
+    "aidflow_dao",
+    dao + daoGanancia
+  );
 }
 
 function msg(texto) {
